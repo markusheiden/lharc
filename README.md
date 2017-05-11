@@ -1,4 +1,4 @@
-# Atari LHARC
+# Atari LHArc
 
 Atari Kompressionsprogramm LHArc für *.LZH Dateien.
 
