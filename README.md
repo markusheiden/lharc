@@ -1,6 +1,6 @@
 # Atari LHARC
 
-Kompressionsprogramm LHARC für Atari.
+Atari Kompressionsprogramm LHArc für *.LZH Dateien.
 
 Dies ist die letzte Version 3.20 beta 3.
 
@@ -11,8 +11,7 @@ Um sie für den Atari ins richtige Format zu wandeln,
 kann man das Kommandozeilentool [recode](https://github.com/pinard/Recode) verwenden.
 
 ```
-recode UTF-8..AtariST *.TXT
-recode UTF-8..AtariST *.FIL
+recode UTF-8..AtariST [FILE]
 ```
 
 ## Dokumentation
