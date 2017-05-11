@@ -1,0 +1,125 @@
+Version 3.00 junior:
+    - Optimierungen:
+        - LH5-Einpacken: 8-10% (je nach Rechner)
+        - LH5-Auspacken: ~10%
+        - Prüfsummenbildung: 25%
+          => beschleunigt LH5-Auspacken um weitere 5-10%
+    - HPack-Archive (*.HPK) werden jetzt ungepackt archiviert
+    - das Kommando 'x' (eXtract) setzt jetzt die Option '-x3', das Kommando
+      'e' (extract) bleibt unverändert
+    - beim Kommando freshen (f)/re-construct (r) kann die Option -d aus
+      Gründen der Datensicherheit nicht mehr gesetzt werden
+    - minimale Puffergröße auf 24KByte vergrößert (erhöht Geschwindigkeit
+      bei wenig freiem Speicher oder gesetzter Option -L spürbar)
+    - der Dateizähler beim Einpacken war meistens fehlerhaft
+    - Einlesen von zerstörten Archiven führte meistens zu Endlosschleifen
+    - beim Kommando 'list' waren bei überlangen Dateinamen die Spalten teil-
+      weise verschoben
+    - die Option -t setzt jetzt auch das Archiv-Datum, wenn keine Datei ein-
+      gepackt wurde
+    - selten auftretender Fehler beim Einpacken von sehr langen Dateien (ab
+      8 MByte), der zu zerstörten Archiven führen konnte, behoben
+    - Probleme mit fehlerhaften Archiven vom Amiga (z.B. falsche Datei-
+      Attribute) beseitigt
+    - Es wird jetzt immer versucht, auch kleine Dateien (<=40 Bytes) zu
+      packen
+    - Tippfehler, der beim Schließen von Dateien bei den unterschiedlichsten
+      Kommandos teilweise zu Problemen, auch Abstürzen, führen konnte, kor-
+      rigiert
+
+Version 3.01 junior:
+    - übersetzt mit MiNT-Library PL 44
+    - das Archiv-Bit wird jetzt bei gesetzter Option '-b' erst nach dem
+      Einpacken gelöscht
+    - Option -d funktioniert wieder beim Kommando freshen (f) bzw.
+      re-construct (r)
+    - bei der Dateisuche sollte unter normalen Bedingungen kein Überlauf
+      der Datei-Tabelle mehr auftreten
+    - Dateioperationen geringfügig beschleunigt
+    - unter MTOS/MiNT konnte LHarc auf XFS-Partitionen nicht mehrfach
+      parallel mit dem gleichen Arbeitsverzeichnis gestartet werden
+      (Datenverlust beim Einpacken)
+    - Speicherbedarf um 32k reduziert
+    - Entpack-Routine besser an Cache der 68030-CPU angepaßt
+
+Version 3.10 junior:
+    - selbstextrahierende Archive (Utility 'MAKE_SFX')
+    - Erzeugen/Öffnen von Dateien beim Auspacken beschleunigt sowie
+      damit zusammenhängende Probleme mit dem Virenscanner Protect6
+      behoben
+    - beim Kommando 'verbose list' (v) wurde die System-ID nicht angezeigt
+    - überflüssigen Zeilenvorschub bei der Anzeige von Dateikommen-
+      taren entfernt
+
+Version 3.11 junior:
+    - Workaround für einen Fehler in MagiCMac (Entpacken funktionierte nur
+      auf dem MagiCMac-Volume). Besten Dank an Götz Hoffart für das
+      entscheidende SysMon-Protokoll.
+      Dieser Fehler ist ab MagiCMac 1.2.8 beseitigt.
+    - Diverse Abfragen auf MiNT bzw. den MiNT-Cookie entfernt. Dadurch
+      verwendet LHarc einige neuere Gemdos-Aufrufe auch dann, wenn sie
+      nicht von MiNT (sondern z.B. von MagiC oder MetaDOS) bereitgestellt
+      werden. Dies sollte sich bei der Behandlung langer Dateinamen
+      positiv bemerkbar machen.
+
+Version 3.12 junior:
+    - neuer Schalter -F aktiviert die 5+3-Regel beim Entpacken langer
+      Filenamen auf eine Gemdos-Partition. Gegenüber dem Abschneiden
+      nach dem achten Zeichen gibt es so weniger Namenskollisionen.
+
+      Beispiele:
+
+           langer Name    ohne 5+3    mit 5+3
+         -----------------------------------------
+           tclLoadAix.c   TCLLOADA.C  TCLLOAIX.C
+           tclLoadAout.c  TCLLOADA.C  TCLLOOUT.C
+           tclLoadDl.c    TCLLOADD.C  TCLLODDL.C
+           tclLoadDl2.c   TCLLOADD.C  TCLLODL2.C
+           tclLoadDld.c   TCLLOADD.C  TCLLODLD.C
+
+    - neuer Schalter -O: Ein direkt nach dem Archivnamen übergebener
+      Ordner wird nicht mehr angelegt sondern aus dem Archiv entpackt
+    - Kommando 'e' legt keine leeren Ordner mehr an
+    - Kommando 'm' und Option -d löschen jetzt auch Ordner
+    - Schalter -D funktioniert jetzt wie im Manual beschrieben, d.h.
+      Dateien, die im Quellpfad nicht mehr vorhanden sind, werden aus
+      dem Archiv gelöscht
+    - "Usage"-Anzeige beachtet jetzt $LINES (Anzahl Zeilen in der Console)
+      und kann mit 'q' abgebrochen werden
+    - wenn die Ausgabe umgelenkt wird, wartet LHarc nicht mehr auf eine
+      Taste
+
+Version 3.13 junior:
+    - Schalter -n funktioniert wieder
+    - Schalter -y verursacht keinen Absturz mehr
+    - Problem mit case-sensitiven Filesystemen (z.B. RAMDISK.XFS) behoben:
+      Wenn ein Pfad nicht gefunden wurde, weil der Ordner erst noch ange-
+      legt werden mußte, wurden die Namen von zu entpackenden Files in
+      Großbuchstaben gewandelt.
+    - Flag -S (Groß-/Kleinschreibung erhalten) kann jetzt auch beim
+      Auspacken angegeben werden. Damit kann man erzwingen, daß beim
+      Auspacken auf Dateisysteme, die Groß-/Kleinschreibung nicht unter-
+      scheiden (z.B. VFAT) nicht automatisch alles in Kleinbuchstaben
+      gewandelt wird.
+    - Wenn beim Update eines Archiv (Kommando 'u') keine Datei hinzugefügt,
+      verändert oder gelöscht wurde, dann wird das Archiv jetzt nicht mehr
+      unnötigerweise neu geschrieben. Damit bleiben Datum und Uhrzeit des
+      Archivs unverändert.
+    - Wenn als zu bearbeitendes Archiv ein Link auf ein Archiv übergeben
+      wird, dann bearbeitet LHarc nun wirklich das Archiv und nicht den
+      Link.
+    - Wenn ein ganzes Laufwerk gepackt wird (Laufwerksicon auf LHarc
+      ziehen), dann heißt das resultierende Archiv jetzt <Laufwerk>.LZH
+      (entsprechender Laufwerksbuchstabe) statt nur ".LZH".
+
+Version 3.13a junior:
+    - Man kann jetzt wieder Ordner zum Einpacken auf das LHarc-Icon ziehen
+      (unabhängig von den Einstellungen des verwendeten Desktops).
+
+Version 3.20 junior (beta):
+    - Vollkommen überarbeitete und neu strukturierte Pack- und Entpack-
+      Routinen. Leichte Verbesserungen des Interfaces zu diesen Routinen.
+    - Spezielle 68030-Version.
+    - Etwas mehr internationalisiert, d.h. mehr Texte in Deutsch.
+    - Abfrage auf Vorhandensein einer CPU >= 68020 eingebaut.
+

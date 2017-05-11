@@ -1,0 +1,1302 @@
+
+                           LHarc Version 3.20 (junior)
+                          =============================
+
+                       Ein Hochleistungs-Dateikomprimierer
+                      -------------------------------------
+
+
+                       von Christian Grunenberg, April 1994
+                         unterstützt durch Andreas Mandel
+
+                    kleinere Korrekturen und Erweiterungen von
+                               Dirk Haun, 1996/97
+
+                   überarbeitete Pack- und Entpack-Routinen von
+                               Markus Heiden, 1998
+
+                           basierend auf: LHarc 2.01l
+                   Copyright (c) Haruyasu Yoshizaki, 1988-1989
+
+
+ LHarc ist inklusive aller Quelltexte Freeware. Dies bedeutet, daß das Pro-
+ gramm frei kopiert, getestet und benutzt werden darf. Dabei muß LHarc aller-
+ dings immer komplett weitergegeben werden! Eine Verbreitung über Mailboxen
+ und PD-Versender ist sowohl erlaubt als auch erwünscht.
+
+ Support:
+----------
+ Christian Grunenberg hat den Support von LHarc leider eingestellt. Ich (Dirk
+ Haun) habe vorerst nur einige kleinere Korrekturen an der Junior-Version
+ vorgenommen. Da meine Zeit recht knapp ist, gibt es Updates leider nur in
+ sehr unregelmäßigen Abständen (über ein Jahr zwischen Version 3.12 und 3.13).
+ Ich würde es daher begrüßen, wenn sich jemand anderes bereit erklären würde,
+ den weiteren Support von LHarc zu übernehmen.
+
+ HINWEIS: Christian Grunenberg hat die Sourcen zur LZH-Shell und zum SFX
+          nicht veröffentlicht, daher kann ich an diesen Programmen auch
+          keine Änderungen vornehmen.
+
+ Bei Fragen oder Fehlermeldungen können Sie sich direkt an den Autor wenden,
+ wobei diese jedoch nur beantwortet werden, wenn ein frankierter Rückumschlag
+ beiliegt (oder schreiben Sie per e-mail, Adresse siehe unten).
+
+ Fehlermeldungen sollten folgende Angaben beinhalten:
+
+   Allgemein:
+   ----------
+     - Rechnertyp (Prozessor, Ram)
+     - TOS-Version, im Ram/Rom
+     - Autoordner-Programme
+     - Accessories
+
+   Aufruf von LHarc:
+   -----------------
+     - Junior-Version (LHARCxxx.TTP), Shell (LZHSHELL.APP) oder SFX
+     - freier Speicher
+     - übergebene Parameter und Art der Übergabe (ARGV)
+     - Environment-Variablen
+     - aufrufendes Programm
+     - Ausgaben von LHarc
+     - ein SysMon- oder TempleMon-Protokoll
+     - Rückgabewert von LHarc (sehr wichtig!)
+
+ Die neueste Version von LHarc erhalten Sie, indem Sie mir eine Diskette samt
+ frankiertem Rückumschlag und einer Aufwandsentschädigung von DM 5,- zusenden.
+ Den Quelltext erhalten Sie unter den gleichen Bedingungen wie die neueste
+ Version von LHarc. Sowohl LHarc als auch die Quelltexte liegen immer in der
+ Maus WI2 in der neuesten Version.
+
+ Adresse:
+----------
+    Dirk Haun
+    Johanniterstr. 3
+    D-74177 Friedrichshall
+
+ E-Mail:
+---------
+    Dirk Haun @ LB (MausNet)
+    dirk_haun@lb.maus.de (Inter-/Usenet)
+
+
+ Adresse Christian Grunenberg:
+-------------------------------
+    Christian Grunenberg
+    Traminerweg 5
+    D-71717 Beilstein
+
+
+  WICHTIG:
+ ==========
+ Für die einwandfreie Funktionalität von LHarc kann und will ich nicht garan-
+ tieren und übernehme daher keinerlei Verantwortung für Schäden jeglicher Art,
+ die von LHarc verursacht werden. Die Benutzung dieses Utilities erfolgt auf
+ eigene Gefahr!
+
+  PFXPAK+/AFX+:
+ ---------------
+         Support und Weiterentwicklung von PFXPAK+ und AFX+ liegen weiterhin
+         bei
+
+         Thomas Quester
+         Eilbeker Weg 14
+         22089 Hamburg-Wandsbek
+         Tel. 040 200 1557
+
+         Deshalb möchte ich darum bitten, Registrierungen von oben genannten
+         Programmen an Thomas Quester und NICHT an mich zu senden.
+
+  ACHTUNG:
+ ==========
+
+ Durch die geänderten Kommandozeilenparameter gegenüber LHarc 2.01l ist LHarc
+ ab Version 2.20 evtl. inkompatibel zu Packer-Shells, bei denen die übergebe-
+ nen Parameter nicht eingestellt werden können. Daher ist von einer Verwendung
+ solcher Shells abzuraten, v.a. wenn sie die Ausgabe mit der Option '-d'
+ unterdrücken, was in dieser Version ein nachträgliches Löschen der bearbeite-
+ ten Dateien bewirkt. Die Ausgabe muß in den neueren Versionen über die Option
+ '-q' unterdrückt werden. Ebenso wurde die Bedeutung der Optionen '-b','-k'
+ sowie '-r' leicht abgeändert, wobei jedoch keine Probleme auftreten sollten.
+ Weitere Änderungen der Kommandozeilensyntax siehe 'Hauptverzeichnis'.
+
+
+  Aufruf von LHarc als TTP (TOS takes parameter):
+ =================================================
+
+  Der Aufruf von LHarc hat folgende Form:
+
+    LHarc [Kommando] [{{-|/}{<Schalter>[-|+|0-3|<Option>]}}..] <Archivname>
+    [{Laufwerk:[\]}|{Hauptverzeichnis\}] {[&-|&Pfad|~Pfade|Pfade] ...}
+
+  In Kurzform:
+  ------------
+    LHarc Kommando -Schalter Archivname Hauptverzeichnis Pfad(e)
+
+    bzw.
+
+    LHarc Kommando /Schalter Archivname Hauptverzeichnis Pfad(e)
+
+    Das Wort "LHarc" muß nur in Kommando-Zeilen-Interpretern (CLIs,Shells),
+    nicht jedoch im Desktop, in dem das Programm LHarc.TTP bereits angeklickt
+    wurde, eingegeben werden. Im Desktop sollte LHarc nach Möglichkeit so an-
+    gemeldet werden, daß die vollen Pfadnamen übergeben werden, da es sonst
+    evtl. zu Problemen mit Dateien/Ordnern, welche auf dem Desktop liegen und
+    an LHarc übergeben wurden, kommen kann (z.B. mit dem Atari-NewDesk).
+
+    Kommando ist ein einzelner Buchstabe (siehe unten). Wird kein Kommando an-
+    gegeben, wird automatisch 'e -gx3m' genommen, wenn ein Dateiname übergeben
+    wurde und es sich dabei um ein LHarc-Archiv handelt. Im Fall eines Ordners
+    wird 'u -rx3m', im Fall einer normalen Datei 'u -x3m' genommen. LHarc läßt
+    sich so als Anwendung für '*.LZH' anmelden, um Archive per Doppelklick in
+    einen gleichnamigen Ordner (im Verzeichnis des Archivs) auszupacken sowie
+    um Ordner oder einzelne Dateien in ein gleichnamiges Archiv mit der Endung
+    'LZH' einzupacken. Werden mehrere Ordner oder Dateien übergeben, so erhält
+    das Archiv den Namen des ersten Ordners bzw. der ersten Datei.
+
+    Schalter ist ein einzelner Buchstabe mit einem Minus '-' oder Slash '/'
+    davor und wahlweise einem '-', '+' oder einer Zahl dahinter. Das '-' sowie
+    die '0' stehen für Ausschalten, das '+' sowie die '1' für Einschalten.
+    Andere Zahlen stehen für spezielle Optionen. Wird nichts hinter der Option
+    angegeben, so wird sie aktiviert (entspricht '+'). Bei der Eingabe der
+    Schalter ist auf die Groß-/Kleinschreibung zu achten, da diese hier von
+    Bedeutung ist, d.h. das gleiche Buchstaben unterschiedliche Bedeutungen
+    haben können, je nachdem, ob sie groß oder klein geschrieben wurden.
+    Weiterhin können auch mehrere Schalter hinter den Zeichen '-' bzw. '/' an-
+    gegeben werden, z.B. anstatt '-q -m -5' einfach '-qm5' angeben. Allerdings
+    können nach den Optionen '-N','-z','-v','-w','-I','-P','-U','-Y' und '-M'
+    prinzipbedingt keine weiteren Optionen  stehen, sondern müssen durch Leer-
+    zeichen abgegrenzt werden. (Beispiel: '-qm5wf:\temp -f'). Daher empfiehlt
+    es sich, diese Optionen möglichst als letzte anzugeben.
+
+    Archivname ist der Name (optional mit Zugriffspfad) des zu bearbeitenden
+    Archivs, wobei die Endung '.LZH' weggelassen werden kann, sofern nicht
+    mehrere Archive durch Komma getrennt angegeben werden. Ebenso darf die En-
+    dung '.LZH' nicht weggelassen werden, wenn der Archivname mit einem Slash
+    '/' beginnt oder zusätzliche Punkte wie z.B. bei 'compy.sys.atari.test.lzh'
+    enthält. Weiterhin können bei den Kommandos extract (e,x), list (l),
+    verbose list (v), display (p) und test (t) auch die Endungen '.LZS' und
+    '.LHA` weggelassen sowie Wildcards angegeben werden, so daß mehrere Archive
+    mit einem Aufruf von LHarc bearbeitet werden können (maximal 512 Archive
+    pro Aufruf). Bei allen anderen Kommandos werden Wildcards im Archivnamen
+    als normale Zeichen behandelt, wobei jedoch die Zeichen '*' und '?' nicht
+    erlaubt sind.
+    Bei den Kommandos append (a), update (u) und move (m), d.h. bei der Er-
+    stellung von neuen Archiven, können als Archivnamen auch Devices unter
+    MiNT angegeben werden, so daß man z.B. Archive direkt auf einen Streamer
+    ausgeben kann, ohne daß vorher ein temporäres Archiv auf der Platte ange-
+    legt werden müßte. V.a. bei Backups von fast vollen Festplatten ist diese
+    Möglichkeit äußerst nützlich.
+    Ebenso können bei den Kommandos extract (e,x), test (t), display (p),
+    list (l) und verbose list (v) Archive direkt von einem Device eingelesen
+    werden.
+    Hingegen darf beim Kommando compress (c) kein Archiv angegeben werden!
+
+    Sowohl übergebene Dateinamen als auch solche aus Archiven werden den Er-
+    fordernissen des jeweiligen Dateisystems angepaßt, d.h., daß u.a. Slashs
+    '/' zu Backslashs '\' konvertiert, illegale Zeichen entfernt, Klein- in
+    Großbuchstaben gewandelt sowie Namen mit mehreren Punkten entsprechend an-
+    gepasst ('comp.sys.atari.st' wird zu 'compsysa.st') werden.
+    Für TOS-Versionen ohne MiNT bzw. MultiTOS gelten alle o.g. Punkte.
+
+    Werden keine Dateien angegeben, so wird automatisch '*.*' genommen,
+    d.h. es werden alle Dateien bearbeitet. Davon ausgenommen ist logischer-
+    weise das Kommando delete (d) bzw. manche Kommandos bei gesetzter Option
+    '-d'.
+
+    Hauptverzeichnis ist das Verzeichnis, in dem gearbeitet bzw. ein-/ausge-
+    packt wird. Dies gilt jedoch nicht für das Einpacken mit den Kommandos
+    append (a), move (m), update (u) oder compress (c), bei denen beliebig
+    viele Verzeichnisse, welche eingepackt werden sollen, angegeben werden
+    können. Dadurch müssen bei diesen Kommandos eventuelle Wildcards bündig an
+    das Verzeichnis angeschlossen werden, wobei mehrere Wildcards durch Komma
+    getrennt werden müssen. Ansonsten beziehen sich Wildcards ohne Pfadangabe
+    bei diesen Kommandos immer auf das aktuelle Verzeichnis. Eine Parameter-
+    zeile der Form 'a basedir\ *.c *.s' in LHarc 2.01l muß in LHarc ab Version
+    2.20 in der Form 'a basedir\*.c,*.s','a basedir\*.c basedir\*.s' oder
+    'a basedir\*.[CS]' angegeben werden. (siehe auch Option '-r')
+    Ansonsten entpackt z.B. 'x test files\' alle Dateien im Archiv TEST in den
+    Ordner FILES. Ebenso kann das Laufwerk für die Bearbeitung bestimmt wer-
+    den, wobei der Backslash '\' hinter dem Laufwerk weggelassen werden kann.
+    (z.B: 'E:' entspricht 'E:\'). Das Hauptverzeichnis kann global über die
+    Environment-Variable LHARCDIR bestimmt werden (s.u.).
+
+    Pfade sind einer oder mehrere Datei- bzw. Verzeichnisnamen, die auch Wild-
+    cards (s.u.) enthalten dürfen. Enthält ein Pfad ein Semikolon ';', so wird
+    der Pfad bei gesetzter Option -x relativ zu diesem Zeichen beim Einpacken,
+    d.h. bei den Kommandos append (a), move (m) und update (u), gesichert. Das
+    Semikolon muß dabei vor oder hinter einem Backslash '\' oder Slash '/'
+    stehen! In Dateinamen hat es keine Bedeutung.
+    Wird ein '&' dem Dateinamen vorangestellt, so werden die eigentlichen Da-
+    teinamen aus dieser Datei ausgelesen, z.B. fügt 'a test &file.lst' alle
+    Dateien, die in der ASCII-Datei 'FILE.LST' enthalten sind, an das Archiv
+    'TEST' an. Wird als Dateiname '&-' angegeben, so werden die Dateinamen von
+    der Standardeingabe eingelesen (Abbruch mit einer Leerzeile). Dateilisten
+    dürfen ebenfalls Verweise auf weitere Dateilisten enthalten.
+    Durch das Voranstellen von '~' werden bestimmte Dateiarten von der Bear-
+    beitung ausgeschlossen, z.B. schließt '~*.BAK' alle Backup-Dateien aus.
+    Dabei sind ebenfalls Wildcards, jedoch keine Pfadangaben, erlaubt.
+    Ansonsten kann '&' durch '@' sowie '~' durch '!' ersetzt werden, sofern
+    sich Probleme mit Shells ergeben sollten.
+    Maximal können - je nach Länge der Dateinamen bzw. Wildcards und der An-
+    zahl unterschiedlicher Pfade - ca. 2000 Pfade sowie 256 ausschließende
+    Wildcards bei einem Aufruf von Lharc angegeben werden.
+
+
+     Wildcards (Unix-Style)
+    ------------------------
+
+    '*'         beliebige Zeichenkette (Allquantor)
+    '?'         ein beliebiges Zeichen (Existenzquantor)
+    '@'         Sonderzeichenquotierung/Interpunktions-Zeichen
+                (z.B.: '@*' steht für das Zeichen '*' und nicht für den All-
+                quantor)
+    '[a-f|h]'   Menge von Zeichen (ein Buchstabe von 'a' bis 'f' sowie 'h')
+                Dabei kann das Oder-Zeichen '|' auch weggelassen werden. Eben-
+                so können mehrere Angaben in einer Menge gemacht werden, also
+                z.B. '[a-eo-sxyz]' (entspricht den Buchstaben 'a' bis 'e','o'
+                bis 's' sowie 'x','y' und 'z'). Sonderzeichenquotierung ist
+                innerhalb von Mengen ebenfalls möglich, aber nur für die
+                Zeichen '-', '|' und '^' von Bedeutung.
+    '[^akn]'    Ausschließende Menge von Zeichen (weder 'a','k' noch 'n')
+
+
+    Es können mehrere Wildcards durch Komma getrennt übergeben werden, z.B.
+    steht '*.C,*.S' für alle C- und Assembler-Quelltexte. Nützlich ist dies
+    v.a. bei einer Wildcardangabe hinter einem Pfadnamen.
+
+    Beispiele:
+    ----------
+    '*','*.*'     ->  jeweils alle Dateien
+    '*.?*'        ->  Dateien, die eine Erweiterung des Dateinamens besitzen,
+                      also z.B. 'LABER.DOC', aber nicht 'TEXT'
+    '*.C'         ->  alle C-Quelltexte
+    '*.[CS]'      ->  alle C- und Assembler-Quelltexte
+    '[^A]*'       ->  Dateien, deren Name nicht mit 'A' beginnt
+    '*[A-C]'      ->  Dateien, deren Name entweder mit 'A','B' oder 'C' endet
+    '*.TXT,*.DOC' ->  alle Texte sowie Dokumente
+    '*[ABC]*'     ->  Dateien, deren Name ein 'A','B' oder 'C' enthält
+
+    Achtung:
+    --------
+    Bei einem Aufruf von LHarc aus Shells bzw. CLIs, welche selbständig Wild-
+    cards expandieren, kann es zu für den Anwender verwirrenden Vorgängen kom-
+    men. In diesem Fall sollten die Wildcards in Hochkommata oder Anführungs-
+    zeichen gesetzt werden. Außerdem wird dadurch die Geschwindigkeit der
+    Dateisuche von LHarc, welche für diesen Fall optimiert wurde, beschleunigt.
+
+
+  Allgemeines:
+ ==============
+
+    Die Ein- und Ausgabe von LHarc können über Kommandozeilenparameter umge-
+    lenkt werden, z.B. wird die Ausgabe über '>prn' auf den Drucker umgelei-
+    tet oder über '>FILE.OUT' in die Datei 'FILE.OUT' ausgegeben. Ebenso kann
+    die Eingabe umgelenkt werden, z.B. werden über '<FILE.IN' die Eingaben aus
+    der Datei 'FILE.IN' gelesen. Wird bei der Ausgabeumlenkung ein '>>FILE'
+    angegeben, so wird die Ausgabe an die Datei 'FILE' angehängt. Für die
+    Ein-/Ausgabeumlenkung wird keine Shell wie beispielsweise Gulam benötigt,
+    d.h. sie funktioniert auch aus dem Desktop. Schlägt die Umlenkung der
+    Ein- oder Ausgabe fehl (z.B. weil eine Datei nicht geöffnet werden konnte),
+    so wird weiterhin die Konsole als Ein-/Ausgabegerät genutzt.
+
+     Mögliche Ein-/Ausgabegeräte
+    -----------------------------
+
+    CON     -> Tastatureingabe/Bildschirmausgabe
+    PRN/PRT -> Drucker
+    AUX     -> serielle Schnittstelle (Modem-Port)
+
+    Dabei kann hinter den Namen des Gerätes ein Doppelpunkt angeschlossen
+    werden, was aber nicht notwendig ist (z.B. >prn: anstatt >prn). Unter
+    MiNT bzw. MultiTOS können auch die entsprechenden Devices auf Laufwerk U
+    angegeben werden, also z.B. 'u:\dev\aux' oder 'u:\dev\null'.
+
+    Hinter der Ein-/Ausgabeumlenkung dürfen in der Kommandozeile keine wei-
+    teren Parameter folgen, da diese ignoriert werden. Eine Umlenkung der Ein-
+    gabe aktiviert die Option '-m' sowie deaktiviert die Optionen '-R' und
+    '-h', die Ausgabeumlenkung deaktiviert die Option '-h'.
+
+    LHarc unterstuetzt sowohl die konventionelle Parameterübergabe als auch
+    die Übergabe über das ARGV-Verfahren moderner Desktops sowie des neuen
+    MultiTOS-Desktops.
+
+    Über die Environment-Variablen LHARC/LHA können ebenfalls die Schalter
+    eingestellt werden, so daß diese nicht mehr bei jedem Programmstart über-
+    geben werden müssen. (z.B: 'LHARC=-qrf5'). Dabei können die Zeichen '-'
+    bzw. '/' vor den Schaltern weggelassen werden.
+    Über die Variablen TMP/ARCTEMP/TMPDIR kann das Arbeitsverzeichnis gesetzt
+    werden, entspricht also der Option '-w'. Die Variable UNPACKED entspricht
+    der Option '-U'. Generell haben die über die Kommandozeile übergebenen
+    Parameter Vorrang vor den Environment-Variablen. Um die Bildschirmausgabe
+    des Prozeßindikators an die tatsächliche Bildschirmbreite anzupassen,
+    sollte die Variable COLUMNS gesetzt sein (minimale Bildschirmbreite 40
+    Zeichen), da sonst von einer Breite von 80 Zeichen ausgegangen wird.
+    Wird die Environment-Variable LHARCPAR auf einen Zahlenwert (!) ungleich
+    Null gesetzt, so werden vor der Abarbeitung der Kommandozeile die an LHarc
+    übergebenen Parameter nochmals in Hochkommata ausgegeben (sofern die
+    Option '-q' nicht gesetzt ist), so daß die von Shells u.ä. Programmen an
+    LHarc übergebenen Parameter überprüft werden können. Über die Variable
+    LHARCDIR kann das Hauptverzeichnis für LHarc voreingestellt werden. Da-
+    durch können z.B. Archive per Doppelklick in ein bestimmten Zielpfad ent-
+    packt werden.
+
+    Nach der Bearbeitung von SFX- (self-extracting) oder PFX- (programm file
+    extractor) Archiven müssen diese neu erstellt werden, da die notwendigen
+    Programmteile am Archivanfang bzw. -ende zur Bearbeitung entfernt werden
+    müssen und eine automatische Anpassung aufgrund mehrerer Versionen von SFX
+    und PFXPAK nicht immer gewährleistet werden kann.
+
+    Temporäre Dateien werden im Gegensatz zu älteren Versionen variabel er-
+    zeugt, so daß LHarc unter Multi-Tasking-System mehrmals gestartet werden
+    kann, wobei einer Verwendung eines einheitlichen Arbeitsverzeichnis (z.B.
+    über die Environment-Variable TMP) nichts im Wege steht. Dabei haben die
+    Dateinamen immer die Form 'LHA)(T)(.XXX', wobei XXX für eine hexadezi-
+    male Zahl zwischen 0 und 4095 steht. Nur beim AFX-Packen wird ständig mit
+    temporären Dateien mit fixem Namen '__temp__.lzs' gearbeitet.
+
+    LHarc Rückgabewerte:
+    --------------------
+
+    Kein Bit (0)  - kein Fehler
+    Bit 0  (1)    - Zerstörte Tabelle/falsches Paßwort
+    Bit 1  (2)    - Prüfsummenfehler
+    Bit 2  (4)    - Schreibfehler
+    Bit 3  (8)    - Lesefehler
+    Bit 4  (16)   - Fehler beim Umbennen/Erzeugen eines Ordners
+    Bit 5  (32)   - Fehler beim Umkopieren/Erzeugen des temporären Archivs
+    Bit 6  (64)   - Nicht implementiertes Kommando
+    Bit 7  (128)  - Datei kein LHarc-Archiv/Kein Archivname
+    Bit 8  (256)  - Datei nicht gefunden/Keine Datei angegeben
+    Bit 9  (512)  - Nicht genügend Speicher
+    Bit 10 (1024) - Archiv teilweise zerstört
+    Bit 11 (2048) - Überflüssige Daten am Archivende
+
+
+  Ausgaben:
+ ===========
+
+    Vor dem Beginn des Pack-Kommandos (append (a), update (u), move (m) und
+    compress (c)) werden von LHarc die zu bearbeitenden Dateien in den ange-
+    gebenen Pfaden gesucht. Dabei wird zur Kontrolle ständig die Nummer des
+    gerade bearbeiteten Pfades/Wildcards, die Anzahl der Pfade/Wildcards sowie
+    die Anzahl der gefundenen Dateien ausgegeben.
+
+    Vor dem Packvorgang erfolgt bei jeder Datei eine Ausgabe folgender Form:
+    (<aktuelle Datei>/<Anzahl der Dateien>): <Dateiname>
+    Dadurch ist eine ständige Kontrolle über den Fortschritt des Vorgangs ge-
+    währleistet, d.h. wieviele Dateien bereits bearbeitet wurden und wieviele
+    noch bearbeitet werden müssen.
+
+    Nach dem Packvorgang erfolgt folgende Ausgabe:
+    <Originalgröße> -> <gepackte Größe> (<Packrate>)
+    Hierbei wird die Packrate in Prozent der ursprünglichen Dateigröße ange-
+    geben.
+
+    Durch die Ausgabe des Prozeß-Indikators ist während der Bearbeitung (Ein-/
+    Auspacken) einer Datei der Fortgang des Kommandos ersichtlich.
+    (s.a. Option '-n')
+
+    Die Meldung 'Zerstörte Daten gefunden und überlesen' bedeutet, daß inner-
+    halb des Archives zerstörte Dateien gefunden wurden, welche automatisch
+    übersprungen wurden.
+
+    Die Meldung 'Überflüssige Daten am Archivende (x Bytes)' bedeutet, daß am
+    Ende des Archives noch Daten gefunden wurden, welche zu keiner Datei ge-
+    hören. Dies kann einerseits von DFÜ-Protokollen verursacht werden, welche
+    Dateigrößen aufrunden, andererseits kann es sich um teilweise zerstörte
+    Archive handeln. Bei mehr als 1024 Byte handelt es sich höchstwahrschein-
+    lich um zerstörte Daten, wobei LHarc keine Datei innerhalb dieser Daten
+    finden konnte.
+
+  Kommandos:
+ ============
+
+a   Dateien zum Archiv hinzufügen (append)
+
+    Die angegebenen Dateien werden an das Archiv angehängt. Bereits im Archiv
+    existierende gleichnamige Dateien werden überschrieben.
+
+    Dieses Kommando entspricht 'u -c'.
+
+    ACHTUNG:
+    Im Gegensatz zu älteren LHarc-Versionen werden Archive beim Einpacken von
+    Dateien (Kommandos append (a), update (u) und move (m)) nicht mehr auto-
+    matisch nach Dateinamen sortiert, da LHarc ab Version 2.20 unsortierte
+    Archive, u.a. auch aus anderen Rechnerwelten, korrekt bearbeiten kann.
+    Ältere Versionen von LHarc haben teilweise Probleme mit der weiteren Be-
+    arbeitung (o.g. Kommandos) von unsortierten Archiven.
+
+m   Dateien in das Archiv bewegen (move)
+
+    Die angegebenen Dateien werden zum Archiv hinzugefügt. Wenn eine Datei be-
+    reits im Archiv enthalten ist, so wird sie überschrieben. Nach erfolg-
+    reicher Beendigung von LHarc werden die Originaldateien gelöscht.
+
+    Dieses Kommando entspricht 'a -d' bzw. 'u -dc'.
+
+f,r Dateien im Archiv ersetzten  (freshen,re-construct)
+
+    Die Dateien werden nur in das Archiv übernommen, wenn bereits gleich-
+    namige Dateien im Archiv vorhanden und älteren Datums sind. Dadurch
+    werden die Dateien im Archiv auf den aktuellen Stand gebracht.
+
+u   Dateien im Archiv erneuern (update)
+
+    Die angegebenen Dateien werden zum Archiv hinzugefügt. Wenn eine Datei be-
+    reits im Archiv existiert, so wird sie nur hinzugefügt, wenn sie neueren
+    Datums als die bereits im Archiv vorhandene Datei ist.
+
+d   Dateien im Archiv löschen (delete)
+
+    Die angegebenen Dateien werden aus dem Archiv vollständig entfernt, also
+    nicht nur als gelöscht markiert wie bei anderen Archivern.
+
+t   Teste Archiv (test)
+
+    Es wird überprüft, ob die Dateien im Archiv die richtige Prüfsumme (CRC)
+    besitzen. Diese Funktion ist fast die gleiche wie extract (e,x), nur daß
+    die extrahierten Dateien nicht geschrieben werden. Dabei werden außerdem
+    die Prüfsummen der Archiv-Header sowie die Tabellen der einzelnen Dateien
+    überprüft.
+
+p   Dateien aus dem Archiv anzeigen (disPlay)
+
+    Die Dateien werden auf den Bildschirm extrahiert. Dabei kann die Anzeige
+    z.B. mit ">prn" auf den Drucker umgeleitet werden. Mit CTRL-S kann die
+    Ausgabe angehalten, mit CTRL-Q fortgesetzt und mit CTRL-C abgebrochen wer-
+    den. Diese Tastenkombinationen sind auch bei allen anderen Bildschirmaus-
+    gaben aktiv, d.h. LHarc kann ständig, sofern die Ausgabe nicht unterdrückt
+    wird, unterbrochen werden.
+
+    Weitere Möglichkeiten zu diesem Kommando siehe Option '-v'.
+
+e,x Dateien aus dem Archiv extrahieren (eXtract)
+
+    Die angegebenen Dateien werden aus dem Archiv in das aktuelle Verzeich-
+    nis oder in ein optional angegebenes Verzeichnis oder Laufwerk extrahiert.
+    Über die dabei aufgetretenen Fehler wird am Ende des Vorgangs eine kurze
+    Statistik ausgegeben. (Bad Tables, CRC-Errors, Files skipped, Damaged
+    Files). Diese Statistik erscheint auch bei den Kommandos test (t) und dis-
+    play (p).
+    Das Kommando 'x' setzt zusätzlich die Option '-x3', so daß die Dateien
+    inkl. der Pfadstrukturen ausgepackt werden.
+
+l,v Dateiliste des Archivs (list,verbose list)
+
+    Die Dateiliste wird angezeigt. Zu jeder Datei wird die Größe des Origi-
+    nals, der gepackten Datei, die Packrate in Prozent, das Datum, die Zeit,
+    die Attribute, der Pack-Algorithmus (Typ), die Prüfsumme (CRC) sowie der
+    Header-Level angezeigt.
+
+    Beim Kommando list (l) zeigt ein Plus '+' vor dem Dateinamen an, daß zu-
+    sätzlich zum Dateinamen noch der Pfadname mitgesichert wurde. Ein Pfeil
+    nach rechts ('>') am Ende des Dateinamens bedeutet, daß der Dateiname
+    länger als 13 Zeichen ist und nicht vollständig angezeigt werden kann.
+
+    Das Kommando verbose list (v) entspricht 'l -x', wodurch zusätzlich Datei-
+    pfade und -kommentare sowie eine System-Identifikation des Rechners, auf
+    dem die Dateien eingepackt wurden, angezeigt werden. Ebenso wird eine even-
+    tuelle Verschlüsselung der Dateien angezeigt.
+    Über die Option '-x2' kann die Ausgabe der Datei-Kommentare unterdrückt
+    werden, durch die Option '-x3' werden nur die Dateinamen ausgegeben.
+
+    Mögliche Attribute:
+        a - Archiv
+        r - 'Nur lesen' - Datei (read-only)
+        w - 'Lesen/Schreiben' - Datei (read/write)
+        h - Versteckte Datei (hidden)
+        s - System - Datei
+        d - Ordner (directory)
+
+    Weitere Ausgabemöglichkeiten zu diesen Kommandos siehe Option '-v'.
+
+c   Dateien für den Online-Entpacker AFX+ einpacken (compress AFX-Files)
+
+    Die angegebenen Dateien werden für AFX gepackt, wobei kein Archiv-
+    name angegeben werden darf. Dateien, deren Dateilänge kleiner als die
+    Länge eines Clusters ist, werden dabei nicht gepackt, da sich keine
+    Größenvorteile ergeben würden, sondern nur Geschwindigkeitsnachteile.
+    Ebenso werden Dateien, deren gepackte Länge größer als die Original-
+    länge ist bzw. die gepackt nicht mindestens 1 Cluster weniger belegen,
+    im Originalzustand belassen. Im Gegensatz zu älteren Versionen können
+    jetzt auch DRI-Objektdateien und bibliotheken AFX-gepackt werden.
+
+    Eine Unterbrechung des Packvorgangs durch Ctrl-C bleibt dabei ohne Daten-
+    verlust, wobei evtl. eine temporäre Datei (s.o. ) im Arbeitsverzeichnis
+    zurückbleibt.
+
+    Beispiel : 'c -r *.*' packt alle Dateien auf dem aktuellen Laufwerk.
+
+s   Selbstextrahierende Archive erzeugen (self-extracting)
+
+    In dieser Version nur in der Shell bzw. über das externe Utility
+    'MAKE_SFX' möglich.
+
+
+  Schalter:
+ ===========
+
+-r[-|+|2]   Ordner rekursiv durchsuchen und ein-/auspacken
+
+    Es werden auch Dateien bearbeitet, die sich in untergeordneten Ordnern
+    befinden. Ansonsten werden nur die Dateien aus dem aktuellen bzw. den
+    angegebenen Ordnern bearbeitet. Eine Dateimaske (Wildcard) kann bündig
+    an den Ordner angehängt werden. Auch koennen Ordner auf verschiedenen
+    Laufwerken sowie Verzeichnisebenen gleichzeitig gepackt werden.
+
+    Beispiele :'-r test doc\*.txt,*.doc'
+                 -> alle *.TXT und *.DOC Dateien in dem Ordner DOC sowie
+                    dessen untergeordneten Ordnern werden bearbeitet
+               '-r test doc\ texte\' (entspricht '-r test doc\*.* texte\*.*')
+                 -> alle Dateien in den Ordnern DOC und TEXTE und deren
+                    untergeordneten Ordnern werden bearbeitet
+               '-r test doc\ *.txt texte\brief.doc'
+                 -> alle *.TXT Dateien ab dem aktuellen Ordner sowie alle
+                    Dateien in dem Ordner DOC und seinen untergeordneten
+                    Ordnern und die Datei BRIEF.DOC im Ordner TEXTE werden
+                    bearbeitet
+               '-r test *.doc,*.txt' (entspricht '-r test *.doc *.txt')
+                 -> alle *.DOC und *.TXT Dateien ab dem aktuellen Ordner
+                    werden bearbeitet
+               '-r test'
+                 -> alle Dateien ab dem aktuellen Ordner werden bearbeitet
+
+    LHarc ignoriert bei der rekursiven Suche nach Ordnern evtl. angegebene
+    Dateimasken. Außerdem aktiviert diese Option die Option '-x3'. Weiterhin
+    ist die Option '-r' nur bei den Kommandos append (a), move (m), update
+    (u) und compress (c) wirksam, wobei dann kein Hauptverzeichnis angegeben
+    werden darf.
+
+    Die Option '-r2' ist äquivalent zu '-r' und wurde nur aus Kompatibili-
+    tätsgründen zu älteren LHarc-Versionen integriert.
+
+-x[-|+|2|3] Erweiterte Dateinamen/Ausgabe (extended file-names/display)
+
+    Normalerweise wird der Ordnername der Dateien von LHarc entfernt. Dies
+    kann aber zu Problemen führen, wenn mehrere Dateien mit dem gleichen Na-
+    men eingepackt werden sollen.
+
+    Beispiel:
+    D:\PC\INCLUDE\STDIO.H sowie
+    E:\SOZOBON\INCLUDE\STDIO.H
+
+    Ohne '-x' würde LHarc bei beiden Dateien den Pfad entfernen und melden,
+    daß die Datei STDIO.H bereits im Archiv vorhanden ist. Durch die Option
+    '-x' hingegen wird der komplette Pfadname mitgesichert.
+
+    Durch '-x2' werden zusätzlich absolute Pfade erzeugt, d.h. die Datei-
+    namen werden um den Zugriffspfad ergänzt, wobei ein Backslash '\' voran-
+    gestellt wird. Eventuell angegebene Laufwerksangaben werden abgeschnitten.
+    Diese Option ist nur beim Einpacken (Kommandos append (a), update (u),
+    move (m) und compress (c)) von Bedeutung.
+
+    Die Option '-x3' hingegen macht aus evtl. angegebenen absoluten Pfaden
+    relative Pfade, z.B. wird aus 'D:\PC\INCLUDE\STDIO.H' durch diese Option
+    'PC\INCLUDE\STDIO.H'. Dies funktioniert bei allen Kommandos, so daß
+    auch Archive mit absoluten Pfaden ins aktuelle Verzeichnis bzw. ins
+    Hauptverzeichnis entpackt werden können.
+
+    Bei der Anzeige der Dateien eines Archivs bzw. beim Auspacken von Dateien
+    werden bei aktiver Option '-x' auch Dateipfade und -kommentare ausgegeben
+    bzw. verwendet. Weitere Möglichkeiten siehe Beschreibung der Kommandos
+    list (l) und verbose list (v).
+
+-X[-|+]     Dateipfade relativ zu angegebenen Pfaden sichern
+
+    Hierdurch werden beim Einpacken, d.h. bei den Kommandos append(a),
+    move (m) und update (u), die Pfadnamen von den einzupackenden Dateien
+    relativ zu den angegebenen Pfaden gesichert. Diese Option setzt die
+    Option '-x' und entspricht der Möglichkeit, Pfadnamen durch ein integrier-
+    tes Semikolon relativ zu sichern, wobei dies hierdurch automatisch ge-
+    schieht.
+
+    Beispiel:
+    Eingepackt werden sollen die Dateien 'test\texte\test.doc' und
+    'test\read.me'. Durch das Kommando 'a -r test.lzh test\' werden die beiden
+    Dateien mit dem vollen Pfadnamen gesichert. Hingegen wird durch das Kom-
+    mando 'a -rX test.lzh test\' (oder auch 'a -r test.lzh test\;') der Pfad-
+    name relativ zum angegebenen Pfad - hier 'test\' - gesichert, also
+    'text\test.doc' und 'read.me'.
+
+    Praktisch ist diese Option vor allem bei längeren Pfaden, welche nicht mit
+    in das Archiv übernommen werden sollen bzw. wenn eine manuelle Anpassung
+    über Semikolon im Pfadnamen nicht möglich ist (z.B. vollautomatischer
+    Batchbetrieb).
+
+-p[-|+]     Unterscheide Pfadnamen (distinguish pathnames)
+
+    Normalerweise unterscheidet LHarc bei der Bearbeitung von Dateien die
+    Pfadnamen, sofern keine spezifiert wurden, nicht. Durch diese Option wird
+    zwischen den um die Verzeichnisnamen erweiterten Dateinamen unterschieden,
+    und zwar sowohl beim Ein- als auch beim Auspacken.
+
+    Beispiel:
+
+    Angenommen Ihre Archivdatei 'TC.LZH' enthält sowohl die Datei 'STAT.H' als
+    auch Datei 'SYS\STAT.H'.
+    Mit 'x tc stat.h' werden beide Dateien 'STAT.H' entpackt, wobei die ältere
+    Datei von der neueren überschrieben wird. 'x -p tc stat.h' hingegen ent-
+    packt nur die Datei 'STAT.H', und 'x -p tc sys\stat.h' entpackt nur
+    'SYS\STAT.H'.
+
+-f[-|+|2|3] Ordner ebenfalls einpacken (include folders in archive)
+
+    Es werden auch die eigentlichen Ordner mit in das Archiv übernommen,
+    selbst wenn sich in ihnen keine weiteren Dateien befinden. Bei der Option
+    '-f' wird jedoch kein Wildcardvergleich durchgeführt, wobei die Ordner nur
+    eingepackt werden, wenn Wildcards für das entsprechende Verzeichnis an-
+    gegeben wurden und nicht nur einzelne Dateien. Die Ordner werden dabei
+    kompatibel zu Unix-Versionen von LHarc eingepackt. ('-lhd'-Format)
+
+    Mit der Option '-f2' werden ebenfalls Ordner mit eingepackt, aber zusätz-
+    lich wird bei der Bearbeitung von Archiven ein Wildcardvergleich wie bei
+    Dateien durchgeführt, wodurch Ordner selektiv eingebunden bzw. ausge-
+    schlossen werden können.
+
+    Durch die Option '-f3' werden nur Ordner bearbeitet bzw. eingepackt, wobei
+    auch hier der Wildcardvergleich aktiv ist. Durch 'a -rf3 archiv' kann z.B.
+    die komplette Ordnerstruktur ohne die darin enthaltenen Dateien ab dem
+    aktuellen Ordner eingepackt werden.
+
+    Die letzten beiden Optionen sind bei den Kommandos freshen (f) und re-
+    construct (r) inaktiv. Beim Kommando delete (d) wird immer ein Wildcard-
+    vergleich durchgeführt.
+
+    ACHTUNG:
+    Alte LHarc-Versionen überspringen eingepackte Ordner beim Auspacken,
+    teilweise auch mit der Fehlermeldung 'Unknown method'.
+
+-g[-|+]     Archiv XYZ in Ordner XYZ auspacken (goto directory)
+
+    Ein Archiv wird beim Auspacken in einen Ordner mit dem Archivnamen ausge-
+    packt, wobei evtl. angegebene Zielordner weiterhin beachtet werden.
+
+    Beispiel :
+    'x -g test.lzh h:\ordner\'
+
+    Entpackt alle Dateien des Archivs TEST in den Ordner H:\ORDNER\TEST.
+
+-I<dir>     Dateien in ein Verzeichnis im Archiv einpacken (Include-Directory)
+
+    Durch diese Option wird bei eingepackten Dateien nicht der Pfad der Datei-
+    en gesichert. Stattdessen wird der über die Option '-I' spezifierte Zu-
+    griffspfad <dir>, bei dem der abschließende Backslash '\' nicht mitange-
+    geben werden muß, gesichert, wobei der ursprüngliche Pfad der Datei ange-
+    hängt wird. Hierdurch können Verzeichnisstrukturen im Archiv erzeugt wer-
+    den, ohne diese vor dem Einpacken auf einem Laufwerk erzeugen zu müssen.
+    Diese Option setzt die Option '-x3' und ist nur bei den Kommandos append
+    (a), move (m) und update (u) aktiv. Durch nachträgliches Setzen der Option
+    '-x0' kann verhindert werden, daß der ursprüngliche Dateipfad an das
+    Include-Directory angehängt wird.
+
+    Beispiele:
+    'a -Ibin\ test packer\arc.ttp zoo.ttp'
+
+    Hierdurch werden die Dateien PACKER\ARC.TTP und ZOO.TTP im Archiv TEST in
+    das Verzeichnis BIN eingepackt, d.h. die Zugriffspfade für die Dateien
+    lauten 'BIN\PACKER\ARC.TTP' und 'BIN\ZOO.TTP' im Archiv.
+
+    'a -Ibin\ -x0 test packer\arc.ttp zoo.ttp'
+
+    In diesem Beispiel werden die ursprünglichen Dateipfade nicht angehängt,
+    so daß die Zugriffspfade für die Dateien im Archiv 'BIN\ARC.TTP' und
+    'BIN\ZOO.TTP' lauten.
+
+-W[-|+|2]     Kein Wildcard-Matching (no wildcard-matching)
+
+    Mit dieser Option wird das Unix-Wildcard-Matching deaktiviert, d.h. alle
+    übergebenen Pfade und Dateien werden als normale Pfadnamen ohne Wildcards
+    interpretiert (auch der Archivname). Hierdurch können auch Dateien, die in
+    ihren Dateinamen Wildcard-Sonderzeichen besitzen, ohne aufwendige Sonder-
+    zeichenquotierung über den Klammeraffen '@' übergeben werden. Mehrere Da-
+    teien können dabei weiterhin durch Komma getrennt angegeben werden, wobei
+    diese Möglichkeit ebenfalls deaktiviert wird, falls die Option '-W2' ge-
+    setzt ist. In diesem Fall dürfen (fast) alle Zeichen in Dateinamen vorkom-
+    men.
+
+    Diese Option ist ohne Bedeutung für die Option '-U' bzw. die Environment-
+    variable UNPACKED sowie sie die ausschliessenden Wildcards, d.h. bei diesen
+    Optionen sind die Wildcards weiterhin aktiv.
+
+    Beispiel:
+    An LHarc soll die Datei 'dup-[c]' übergeben werden.
+
+    ohne Option '-W' : 'a archiv dup-@[c@]'
+    mit Option '-W'  : 'a -W archiv dup-[c]'
+
+    V.a. im automatischen Betrieb mit Shells oder CLIs ist diese Option nütz-
+    lich, da hier eine Sonderzeichenquotierung von vorher nicht feststehenden
+    Dateinamen besonders schwierig, wenn nicht sogar unmöglich ist.
+    Nachteil dieser Option ist, daß alle einzupackenden Dateien entweder ein-
+    zeln oder als komplettes Verzeichnis übergeben werden müssen.
+
+-d[-|+]     Bearbeitete Dateien nach Vorgang löschen (delete)
+
+    Nach dem eigentlichen Packvorgang (Kommandos append (a), update (u),
+    move (m), freshen (f) und re-construct (r)) werden die bearbeiteten Datei-
+    en gelöscht. Ebenso können hierdurch bei den Kommandos extract (e,x),
+    test (t) und display (p) Dateien aus dem Archiv nachträglich gelöscht
+    werden, jedoch nur, wenn einzelne Dateien bzw. Wildcards angegeben wurden.
+    Ebenso darf in diesem Fall kein MiNT-Device als Archiv angegeben werden.
+    Diese Option deaktiviert die Option '-b'.
+
+    ACHTUNG:
+    In älteren LHarc-Versionen entsprach diese Option der neuen Option '-q'.
+    Daher sollten unbedingt vor einer Installation von LHarc die Kommando-
+    zeilenparameter angepaßt werden.
+
+-A[-|+]     Dateien an das Archiv anhängen (add if file is not in arc)
+
+    Durch diese Option werden bei den Kommandos append (a), update (u) und
+    move (m) nur solche Dateien eingepackt, die noch nicht im Archiv vorhanden
+    sind. Ist die Datei bereits im Archiv vorhanden, so wird mit der nächsten
+    Datei fortgefahren, d.h. es wird nicht die neuere Datei ins Archiv über-
+    nommen. Hierdurch werden Dateien nur an das Archiv angehängt.
+    Die Option '-D' wird durch diese Option deaktiviert.
+
+-D[-|+]     Dateien aus dem Archiv entfernen (delete if file is not specified)
+
+    Durch diese Option werden bei den Kommandos append (a), move (m) und
+    update (u) diejenigen Dateien aus dem Archiv entfernt, welche nicht ex-
+    plizit angegeben oder von LHarc gefunden wurden. Der Sinn besteht darin,
+    daß bei Backups ältere Dateien, die nicht mehr existieren oder inzwischen
+    einen anderen Namen haben, aus dem Archiv entfernt werden, so daß eine
+    unnötige Aufblähung des Archivs vermieden wird. Die Option '-A' wird durch
+    diese Option deaktiviert.
+
+-e[-|+]     Datei-Kommentare eingeben/ändern
+
+    Es kann zu jeder Datei ein Kommentar eingegeben werden, der in das Archiv
+    miteingebunden wird. Auch zu Ordnern kann ein Kommentar eingegeben
+    werden. Die Kommentare dürfen auch mehrere Zeilen lang sein, Abbruch er-
+    folgt mit einer Leerzeile, wobei Kommentare bis zu ungefähr 1024 Zeichen
+    lang werden können.
+    Diese Option erlaubt auch das Ändern von bereits existierenden Datei-
+    kommentaren, d.h. kann bei den Kommandos append (a), update (u), move (m),
+    freshen (f), und re-construct (r) angegeben werden.
+    Dateien mit Kommentaren haben Header-Level 1 (s. Option '-k'), sofern kein
+    anderer Level spezifiert wurde.
+
+    ACHTUNG :
+    Alte LHarc-Versionen kommen aufgrund einiger interner Beschränkungen und
+    Fehler nur mit Kommentaren zurecht, die nicht länger als ca. 120 Zeichen
+    sind.
+
+-z[-|+]<file>     Archiv-Kommentar eingeben/ändern
+
+    Es kann zu dem Archiv ein Kommentar eingegeben werden, der miteingebunden
+    wird. Die Kommentare dürfen auch mehrere Zeilen lang sein, Abbruch erfolgt
+    mit einer Leerzeile. Diese Option erlaubt auch das Ändern von bereits
+    existierenden Archivkommentaren, d.h. kann bei den Kommandos append (a),
+    update (u), move (m), freshen (f), delete (d) und re-construct (r) an-
+    gegeben werden (s.a. Option '-e').
+    Wird die Datei <file> angegeben, so wird der Kommentar aus dieser Datei
+    eingelesen, wobei der Kommentar dann auch Leerzeilen im Gegensatz zur
+    Eingabe von der Tastatur enthalten darf. Ist die Datei länger als die
+    maximal mögliche Kommentarlänge, so wird nach der letzten Zeile, die in
+    den Kommentar paßt, abgeschnitten.
+
+    ACHTUNG :
+    Alte LHarc-Versionen ignorieren bzw. überlesen den Archivkommentar !
+
+-w[-|+]<dir> Arbeits-Verzeichnis (Work-Directory)
+
+    Hier kann ein anderes Verzeichnis bzw. ein anderes Laufwerk für
+    die Zwischendateien angegeben werden. Mit dieser Option kann man die
+    Zwischendateien u.a. auf einer schnellen Ramdisk erzeugen lassen. Dabei
+    muß das Arbeitsdirectory bündig nach der Option angegeben werden, z.B.
+    '-wM:\WORKDIR\', wobei der abschließende Backslash nicht angegeben werden
+    muß, d.h. '-wM:\WORKDIR' würde durchaus genügen.
+    Durch die Option '-w-' kann ein evtl. über die Environment-Variablen
+    TMP,ARCTEMP bzw. TMPDIR gesetztes Arbeitsverzeichnis deaktiviert werden.
+
+    Tritt nach dem Packvorgang während des Umkopierens des temporären
+    Archivs ein Fehler auf, so befindet sich das Archiv nach dem Programm-
+    ende im temporären Verzeichnis.
+
+-t[-|+]     Time-Stamp-Option
+
+    Setzt das Dateidatum des Archivs auf das Datum der neuesten Datei
+    im Archiv. Diese Option ist nur bei den Kommandos append (a), move (m),
+    update (u), freshen (f) und re-construct (r) aktiv, wobei dann auch
+    das Archivdatum gesetzt wird, wenn keine Datei eingepackt wurde.
+
+-c[-|+]     Überspringe Zeitvergleich (skip time-comparison)
+
+    Wird eine Datei ausgepackt, die bereits existiert, läßt LHarc automa-
+    tisch die neuere Datei stehen. So werden einige Dateien ausgepackt und
+    andere einfach ignoriert. '-c' zwingt LHarc, die Dateien einfach zu über-
+    schreiben. Ebenso wird bei den Kommandos update (u), freshen (f) und re-
+    construct (r) beim Vergleich von Dateidatum/-zeit bei aktiver Option vor-
+    gegangen.
+
+-N<ddmmyy>  Nur Dateien neuer als Datum ddmmyy bearbeiten
+
+    Hierdurch werden bei den Kommandos append (a), move (m), update (u)
+    und compress (c) nur Dateien bearbeitet, die neuer als das Datum
+    ddmmyy sind, wobei dd der Tag, mm der Monat und yy das Jahr ist.
+    Das Datum muß immer in diesem Format angegeben werden. Diese Option
+    ist auch beim Einpacken von Ordnern gültig.
+
+-C[-|+]     Keine Prüfsummenbildung beim Auspacken (no checksum)
+
+    Durch diese Option wird die Überprüfung der Prüfsumme beim Auspacken de-
+    aktiviert, wodurch das Auspacken zwischen 20% und 100% beschleunigt sowie
+    die Bearbeitung von defekten Archiven erleichert wird. Diese Option gilt
+    für die Kommandos test (t), extract (e,x) und display (p). Auch bei aktiver
+    Option werden weiterhin die Archiv-Header auf Prüfsummenfehler geprüft.
+    Ebenso werden beim Auspacken 'Bad Table'-Fehler festgestellt. Dadurch ist
+    ein Mindestmaß an Sicherheit gewährleistet.
+
+-Y[-|+]<keyword> Paßwort-Schutz (Encryption)
+
+    Durch diese Option können Dateien über einen einfachen Algorithmus komp-
+    atibel zu LHA 2.10 verschlüsselt werden. Dazu muß als Schlüssel ein Paßwort
+    <keyword> angegeben werden, welches maximal 128 Zeichen lang werden kann.
+    Beim Einpacken werden die Dateien nach der Komprimierung mit diesem Paßwort
+    verschlüsselt. Wird beim Auspacken nicht das korrekte Paßwort angegeben, so
+    erscheinen entsprechende Fehlermeldungen. Hierbei muß beachtet werden, daß
+    beim Auspacken nur Dateien ausgepackt werden können, welche mit dem glei-
+    chen Paßwort verschlüsselt wurden, d.h. sind Dateien mit unterschiedlichen
+    Paßwörtern in einem Archiv vorhanden, so müssen diese in mehreren Schritten
+    entpackt werden. Diese Option setzt die Option '-52', da nur so ein wirk-
+    ungsvoller Schutz möglich ist (ungepackte Archive könnte sogar ein "Blinder
+    mit Krückstock" entschlüsseln). Wird eine andere Packmethode gewünscht, so
+    kann diese über die Optionen '-o2' und -'l2' eingestellt werden.
+    Verschlüsselte Dateien haben Header-Level 1 (s. Option '-k'), sofern kein
+    anderer Level spezifiert wurde.
+
+    Beispiel:
+    'a -Y<key> -o2 arc *.*'
+    Packt alle Dateien im aktuellen Verzeichnis mit dem LH1-Algorithmus und
+    verschlüsselt diese anschließend.
+
+
+    ACHTUNG:
+    Ältere LHarc-Versionen sowie die meisten Varianten auf anderen Systemen
+    können verschlüsselte Dateien nicht entpacken.
+
+
+    Der folgende kurze C-Quelltext demonstriert die verwendete Verschlüs-
+    selungstechnik, falls jemand diese auf andere Systeme portieren möchte.
+    Diese Routine entspricht der in LHA 2.10 verwendeten Technik.
+
+    char *key;            /* ptr to start of variable-length key */
+    char *keyptr;         /* work ptr; NULL if no key */
+    /*
+     * crypt - encryption/decryption routine
+     */
+    int crypt(int c)      /* c is the CHARACTER to encode */
+    {
+        if (keyptr) {             /* key supplied ? */
+            if (!*keyptr)         /* at end of key ? */
+                keyptr = key;     /* yes - reinitialise */
+            return c^*keyptr++;   /* XOR it */
+        }
+        return c;                 /* no key, no change */
+    }
+
+    Hierbei muß beachtet werden, daß die Verschlüsselung unmittelbar NACH
+    der Kompression erfolgt und die Entschlüsselung unmittelbar VOR der
+    Dekompression.
+
+-v[-|+|2|3]<file> Benutze anderes Programm zum Ansehen von Dateien (viewer)
+
+    Hier kann für die Kommandos list (l), verbose list (v) und display (p) ein
+    anderes Programm zur Anzeige der Dateien verwendet und die Ausgabe beim
+    Kommando display (p) konfiguriert werden. Dabei muß der Zugriffspfad auf
+    das Programm bündig nach der Option angegeben werden, z.B. '-vE:\GUCK.TTP'.
+    Diese Option setzt die Option '-L1' um sicherzustellen, daß für das aufge-
+    rufene Programm noch genügend Speicher zur Verfügung steht.
+    '-v2' schaltet die Ausgabe des Archivnamens sowie des Dateinamens vor jeder
+    Datei aus, '-v3' unterdrückt alle zusätzlichen Ausgaben, so daß nur die
+    Dateien aus dem Archiv ausgegeben werden. Wird kein Programm angegeben, so
+    wird auf den Bildschirm ausgegeben. Dadurch kann mit der Ausgabeumlenkung
+    eine Datei auf dem Drucker oder anderen Medien ausgegeben werden, da im
+    Gegensatz zu früheren Versionen keinerlei Zeichenumwandlungen (Textmodus)
+    mehr vorgenommen werden. (entspricht '-qv2')
+
+    ACHTUNG:
+    Im Gegensatz zu älteren Versionen ist kein Programm (less.ttp) mehr vor-
+    eingestellt.
+
+-K[0-3]     Akustisches Signal nach Beendigung ausgeben
+
+    Durch diese Option wird nach dem Ende des eigentlichen Vorgangs ein akus-
+    tisches Signal von bis zu 3 Sekunden Länge ausgegeben, so daß man während
+    des Vorgangs anderen Dingen (Kaffee trinken) nachgehen kann.
+
+-j[-|+]     Ausschließen von Dateien der Länge 0
+
+    Es werden nur solche Dateien eingepackt, deren Dateilänge größer als 0
+    Bytes ist. Dadurch können überflüssige Dateien bei einem Backup über-
+    sprungen werden.
+
+-M<size>    Maximale Dateigröße beim Ein-/Auspacken
+
+    Hierdurch wird die maximale Dateigröße beim Ein-/Auspacken (Kommandos
+    append (a), move (m), update (u), compress (c), extract (e,x)) eines
+    Archives festgelegt, d.h. größere Dateien werden nicht ein-/ausgepackt
+    bzw. übersprungen. Die Größe wird dabei in KByte (1024 Bytes) angegeben,
+    z.B. beschränkt '-M720' die Größe auf die Länge einer doppelseitigen Dis-
+    kette. Hierdurch kann z.B. im automatischen Betrieb einer Mailbox u.a.
+    verhindert werden, daß Archive von böswilligen Zeitgenossen die ganze
+    Festplatte füllen und somit den Boxbetrieb blockieren. (z.B. kann man
+    eine 100 MByte-Datei aus lauter gleichen Zeichen auf einige KByte ein-
+    packen).
+
+-s[-|+]     Backslashes in Slashes beim Einpacken konvertieren
+
+    Beim Einpacken werden durch diese Option Backslashs '\' in Slashs '/'
+    konvertiert sowie Großbuchstaben unter Dateisystemen, welche keine
+    Groß-/Kleinschreibung beachten (z.B. GEMDOS), in Kleinbuchstaben gewandelt.
+    Dies erlaubt eine Bearbeitung dieser Archive unter Unix.
+    Archive im Unix-Format haben Header-Level 1 (s. Option '-k'), sofern kein
+    anderer Level spezifiert wurde.
+    Bei der Bearbeitung von bestehenden Unix-Archiven werden die Konver-
+    tierungen automatisch vorgenommen. Ebenso werden beim Extrahieren von
+    Unix-Archiven notwendige Umwandlungen vorgenommen.
+
+-a[-|+]     Alle Attribute zulassen (any attribute)
+
+    Normalerweise werden von LHarc keine Dateien mit dem Hidden- oder System-
+    Attribut eingepackt bzw. ausgepackt. Dies geht nur, wenn die Option '-a'
+    angegeben wird.
+
+-i[-|+]     Dateiattribute,-zeit und Datum nicht setzen (ignore attributes)
+
+    Dateiattribute, Dateizeit und -datum beim Auspacken nicht setzen. Diese
+    Option beschleunigt den Entpackvorgang - je nach Platte und TOS-Version -
+    von vielen kleinen Dateien spürbar.
+    Über die Option '-i2' werden nur Dateizeit -und datum nicht gesetzt, über
+    '-i3' nur die Attribute nicht.
+
+-y          Nur Dateien mit gesetztem Archivbit selektieren
+
+    Es werden nur Dateien eingepackt, deren Archivbit gesetzt ist und
+    somit seit dem letzten Backup verändert wurden. Dabei wird die
+    unterschiedliche Behandlung des Archiv-Bits in den verschiedenen
+    TOS-Versionen berücksichtigt.
+
+    Mit LHarc 'a -ry test' werden z.B. alle veränderten Dateien ab dem
+    aktuellen Verzeichnis in das Archiv TEST eingepackt.
+
+-b          Nach Bearbeitung der Dateien Archivbit löschen (backup)
+
+    Nach der Bearbeitung der einzelnen Dateien wird ihr Archiv-Bit gelöscht.
+    Mit dieser Option sowie der Option '-y' kann leicht ein inkrementales
+    Backup von bestimmten Partitionen oder Verzeichnissen hergestellt werden,
+    bei dem nur veränderte Dateien berücksichtigt werden.
+
+-B          Backup vom Archiv erzeugen (retain backup)
+
+    Hierdurch wird ein Backup des Archivs mit der Endung 'BAK' vor der Be-
+    arbeitung mit den Kommandos append (a), update (u), freshen (f), re-
+    construct (r), move (m) und delete (d). Gleiches gilt für die Kommandos
+    extract (e,x), test (t) und display (p), sofern die Option '-d' gesetzt
+    ist.
+    Existiert bereits eine Datei mit dem Namen des Archivs und der Endung
+    'BAK', so wird diese überschrieben.
+
+-U[-|+]<files> Dateien ungepackt archivieren (lz4/lh0-Format)
+
+    Mit dieser Option können bestimmte Dateien ungepackt archiviert werden. Im
+    Gegensatz zur Option '-u' gilt dies nur für die angegebene Dateien bzw.
+    Wildcards, nicht jedoch für alle Dateien. Mehrere Dateien bzw. Wildcards
+    müssen hierbei durch Komma getrennt werden. Hierdurch können z.B. bestimm-
+    te Dateiarten, bei denen eine Kompression nicht mehr möglich ist bzw. nur
+    sehr geringe Packraten liefert, sofort ungepackt ins Archiv übernommen
+    werden. Der Geschwindigkeitsvorteil hierdurch ist teilweise beträchtlich.
+
+    Default-mäßig werden ARC/ARJ/LZH/LZS/LHA/TAZ/ZOO/ZIP/TGZ/GZ-Archive sowie
+    GIF/JPEG-Grafikdateien ungepackt übernommen, wobei dies durch die Option
+    '-U-' deaktiviert werden kann.
+    Die Option '-U' ist nur von Bedeutung, wenn keine der Optionen '-Y','-5',
+    '-52','-o2' und '-l2' gesetzt sind.
+
+    Beispiel:
+    'a -rU*.zip,*.zoo,*.arj test'
+
+    Packt das aktuelle Verzeichnis samt aller Unterverzeichnisse ein, wobei
+    Archive der Packer Zip, Zoo und ARJ ungepackt archiviert werden.
+
+-u          Ungepacktes Archivieren (lh0-Format)
+
+    Hierdurch werden Dateien ohne Kompression gespeichert, d.h. als ungepack-
+    tes LHarc-Archiv (lh0). Diese Option setzt die Option '-n' beim Einpacken,
+    sofern diese nicht bereits gesetzt wurde.
+
+-4          Ungepacktes Archivieren (lz4-Format)
+
+    Speichert Dateien ebenfalls ohne Kompression, aber als ungepacktes
+    Larc-Archiv (lz4). Diese Option setzt die Option '-n' beim Einpacken,
+    sofern diese nicht bereits gesetzt wurde.
+
+-l[-|+|2]   Larc-Kompression (lz5-Format)
+
+    Erzeugt Larc-Archive. Die Archive sind länger und werden - verglichen mit
+    dem Lh5-Algorithmus - sowohl langsamer erstellt als auch entpackt. Kann
+    eine Datei nicht gepackt werden, so wird sie im ungepackten Larc-Format
+    (lz4) gespeichert. Die Option '-l2' erzwingt immer eine Kompression, auch
+    wenn dadurch das Archiv länger werden sollte.
+
+-o[-|+|2]   LHarc 1.13 - Kompression (lh1-Format, old method)
+
+    Erzeugt LHarc 1.13 - kompatible Archive, d.h. es wird die Kompressions-
+    routine von LHarc 1.13 verwendet. Auch diese Archive sind etwas länger
+    und werden langsamer bearbeitet als LHarc 2.0x-Archive. Kann eine Datei
+    nicht gepackt werden, so wird sie um ungepackten LHarc-Format (lh0) ge-
+    speichert. Die Option '-o2' erzwingt immer eine Kompression, auch wenn da-
+    durch das Archiv länger werden sollte.
+
+-5[-|+|2]    LHarc 2.0x - Kompression (lh5-Format)
+
+    Erzeugt LHarc 2.0x-Archive. Dieser Algorithmus hat die beste Packraten
+    und ist ab Version 2.20 von LHarc beim Ein-/Auspacken eines Archivs auch
+    schneller als die älteren Algorithmen. Durch diese Option werden also im-
+    mer Archive minimaler Größe erstellt. Die Option '-U' wird durch diese
+    Option deaktiviert. Kann eine Datei nicht gepackt werden, so wird sie im
+    ungepackten LHarc-Format (lh0) gespeichert. Die Option '-52' erzwingt
+    immer eine Kompression, auch wenn dadurch das Archiv länger werden
+    sollte.
+
+-k[0-2]     Header-Level bzw. kompatible Header
+
+    Hierdurch kann der Level der Archiv-Header beim Einpacken von Dateien
+    zwischen 0 (kompatible Header), 1 (Standard-Header) und 2 (Extended
+    Header) gewählt werden. Wird kein Level hinter der Option '-k' angegeben,
+    so werden kompatible Header erzeugt. Diese bieten weder Archiv- noch Datei-
+    kommentare oder Verschlüsselung von Dateien, d.h. die Optionen '-e', '-z'
+    und '-Y' werden deaktiviert. Entsprechendes gilt für die Option '-s', da
+    kompatible Header als Trennzeichen zwischen Verzeichnissen nur Backslashs,
+    aber keine Slashs erlauben. Mit '-ok' können kompatible Archive, welche
+    alle gängigen LHarc-Derivate auf den unterschiedlichsten Systemen unter-
+    stützen, erzeugt werden. Im Gegensatz zu älteren Versionen werden
+    Archive mit Header-Level 0 korrekt erzeugt. Bei der Bearbeitung bereits
+    existierender Archive werden automatisch alle Header-Level, auch die
+    fehlerhaften Archive der alten Versionen, unterstützt.
+    Voreingestellt ist Header-Level 0.
+
+    ACHTUNG:
+    Ältere LHarc-Versionen unterstützen Header-Level 2 nicht und können auf-
+    grund eines Fehlers die Archive mit Header-Level 0 der neuen Versionen,
+    welche korrekt erzeugt werden, teilweise nicht bearbeiten ! In solchen
+    Fällen sollten Archive mit Header-Level 1 verwendet werden.
+
+-h[-|+]     Bildschirm nach Beendigung anhalten (hold)
+
+    Beim Aufruf via Desktop wird der Desktop sofort neu aufgebaut, wenn
+    LHarc beendet ist. Man kann so aber keine Fehlermeldungen usw. ansehen.
+    Mit der Option '-h' wird LHarc angewiesen, auf einen Tastendruck nach dem
+    Vorgang zu warten.
+
+-m[-|+|2|3]  Nachfragen automatisch überspringen (no message at query)
+
+    Beim Extrahieren fragt LHarc bei jedem neuen Ordner nach, ob dieser
+    angelegt werden soll. Ebenso frägt er nach, ob bereits existierende
+    Dateien überschrieben werden sollen. Bei dieser Nachfrage kann eine
+    Datei über Rename umbenannt werden, wobei evtl. Pfadangaben ignoriert
+    werden. Durch eine Leerzeile wird die entsprechende Datei übersprungen.
+    Wurde die Option '-m' angegeben, werden diese Fragen automatisch mit 'Ja'
+    beantwortet, ebenso wie die Nachfrage, ob bei einem Archiv mit einer an-
+    deren Erweiterung als '.LZH', '.LHA' oder '.LZS' weitergerarbeitet
+    werden soll.
+    Durch die Option '-m2' wird nur die 'Ordner erzeugen'-Abfrage, mit '-m3'
+    nur die 'Dateien überschreiben'-Abfrage automatisch mit 'Ja' beantwortet.
+
+-q[-|+|2]   Keine Bildschirmausgaben machen (quiet)
+
+    Es werden überhaupt keine Bildschirmausgaben gemacht. Wichtig, wenn LHarc
+    in irgendeinem GEM-Programm arbeiten soll und den Bildschirm nicht zer-
+    zerstören darf. Diese Option beinhaltet natürlich die Optionen
+    '-n+m+e-z-h-R-'.
+    Durch die Option '-q2'  wird nur die Ausgabe des LHarc-Titels unterdrückt.
+
+-n[-|+|2|3] Prozess-Indikator einstellen/unterdrücken (no indicator)
+
+    Wird dieser Schalter angegeben, werden die Punkte '.' und die folgenden
+    Sterne '*' beim Einpacken oder Auspacken sowie die ständige Anzeige der
+    Anzahl der gefundenen Dateien bei der Dateisuche unterdrückt.
+
+    Das Ein-/Auspacken wird dadurch - abhängig von Dateianzahl und -größe -
+    um bis zu 30 Prozent beschleunigt.
+
+    Durch die Option '-n2' wird der Prozeß-Indikator als Prozentwert ausge-
+    geben, d.h. der Prozentwert drückt aus, wieviel von der aktuellen Datei
+    bereits bearbeitet wurde. Zusätzlich wird in Klammern die Anzahl der bis-
+    her bearbeiteten Bytes und die Dateilänge anzeigt.
+
+    Über die Option '-n3' wird der Prozeß-Indikator auf einen rotierenden
+    Balken umgestellt.
+
+-P<chars>   Zeichen für Prozeß-Indikator einstellen
+
+    Durch diese Option können die Zeichen des Prozeßindikators, welche auf '*'
+    und '.' voreingestellt sind, durch fast beliebige Zeichen ersetzt werden.
+    Dabei müssen die Zeichen bündig hinter der Option angegeben werden, wobei
+    das Zeichen für den Stern '*' zuerst kommt. (z.B. ersetzt '-P+' den Stern
+    durch das Plus '+', '-P+_' ersetzt zusätzlich den Punkt durch den
+    Unterstrich '_'). Die Zeichen mit ASCII-Code kleiner 32 dürfen jedoch
+    nicht benutzt werden.
+
+-L[-|+|0-2] Speicheranforderungen begrenzen (Limit memory-allocations)
+
+    Mit der Option '-L1' können die Speicheranforderungen von LHarc auf ein
+    Minimum begrenzt werden, so daß LHarc - inklusive Programmcode - mit unge-
+    fähr 250-450 kByte Speicher - je nach Kommando und Optionen - auskommt.
+    Dies ist v.a. unter MultiTasking-Systemen vorteilhaft, wobei jedoch be-
+    dacht werden muß, daß durch kleinere Dateipuffer die Geschwindigkeit ver-
+    ringert (v.a. beim Auspacken) wird. Im Extremfall belegt LHarc mit der
+    Option '-L0', welche einen Kompromiß zwischen Speicherbedarf und Geschwin-
+    digkeit darstellt, ca. 900 kByte Speicher, wobei jedoch versucht wird,
+    niemals mehr als 50% des freien Speichers zu belegen. Durch die Option
+    '-L2' belegt LHarc den gesamten verfügbaren Speicher bzw. maximal ca.
+    2 MByte, wodurch die Bearbeitungsgeschwindigkeit erhöht wird. Der Nach-
+    teil dieser Option ist, daß nur noch ein geringer Teil des Speichers für
+    die Dateisuche verwendet wird, so daß maximal ca. 1500 Dateien pro Vorgang
+    eingepackt werden können, wenn nicht mehr als 2 MByte Speicher zur Verfü-
+    gung stehen. Im Normalfall können ab ca. 600 KByte freiem Speicher
+    bei gesetzter Option '-L1' (fast) beliebig viele Dateien bearbeitet wer-
+    den. Sollte bei der Dateisuche die Fehlermeldung 'File table overflow' er-
+    scheinen, so sollten sie auf jeden Fall die Option '-L1' setzen.
+
+    Ab Version 2.21 ist standardmäßig die Option -L2 aus Geschwindigkeits-
+    gründen gesetzt.
+
+    ACHTUNG:
+    Bei defekten Archiven bzw. zerstörten Sektoren auf dem Speichermedium ist
+    duch Setzen der Option '-L1' meistens eine Bearbeitung des größten Teils
+    des Archivs möglich.
+
+-S[-|+|2]   Groß-/Kleinschreibung bei Dateinamen (case-Sensitive)
+
+    Durch diese Option wird beim Vergleich von Pfad- bzw. Dateinamen immer die
+    Groß-/Kleinschreibung berücksichtigt, ansonsten nur auf Dateisystemen,
+    welche Groß-/Kleinschreibung beachten (MiNT-Dateisysteme). Dadurch wird
+    eine eindeutige Unterscheidung von Dateien auf allen Dateisystemen ermög-
+    licht, so daß z.B. selektiv eine der Dateien 'Makefile.ST' und
+    'makefile.st' bearbeitet werden kann.
+
+    Über die Option '-S2' kann die Beachtung der Groß-/Kleinschreibung - egal
+    auf welchen Dateisystemen - immer ausgeschaltet werden.
+
+-R[-|+]     (Unix-) Dateinamen manuell umbennen (Rename)
+
+    Mit dieser Option kann die automatische Anpassung von Dateinamen an das
+    Dateisystem deaktiviert werden, so daß - sofern notwendig - die Dateinamen
+    von Hand eingegeben bzw. umbenannt werden müssen. Durch eine Leerzeile
+    wird der automatisch konvertierte Dateiname benutzt. Diese Option ist be-
+    sonders dann von Vorteil, wenn die automatische Konvertierung unbefriedi-
+    gende Ergebnisse liefert. Zugriffspfade werden allerdings weiterhin auto-
+    matisch konvertiert. Diese Option ist nur beim Kommando extract (e,x) von
+    Bedeutung.
+
+-F          aktiviert die 5+3-Regel (five plus three)
+
+    Beim Entpacken von Dateien mit langen Dateinamen auf eine Gemdos-Partition
+    ergeben sich oft Namenskonflikte, da der lange Name normalerweise einfach
+    nach dem achten Zeichen abgeschnitten wird. Bildet man den Namen dagegen
+    aus den ersten fünf und den letzten drei Zeichen (des Basisnamens, also
+    ohne Extension), so führt dies erfahrungsgemäß zu weniger Namens-
+    kollisionen.
+
+-O          nicht in Ordner entpacken (no folder)
+
+    Ist der erste Name, der nach dem Archivnamen übergeben wird, ein Ordner,
+    dann legt LHarc diesen normalerweise an und entpackt das Archiv dorthin.
+    Ist dies einmal nicht erwünscht, so kann man dies mit -O abschalten. Der
+    Ordner wird dann im Archiv gesucht und ggfs. entpackt.
+
+-?  Hilfsbildschirm vor Ausführung des Kommandos ausgeben (nur LHarc-Junior)
+
+
+  Geschwindigkeit:
+ ==================
+
+    LHarc läßt sich natürlich durch eine geeignete Wahl von Optionen etwas
+    beschleunigen. Um ein Maximum an Geschwindigkeit herauszuholen, sollten
+    die Optionen '-i','-m' und '-n' gesetzt sein. Die Optionen '-t','-c',
+    '-d' und '-b' verringern die Geschwindigkeit leicht. Die Begrenzung der
+    Dateipuffer mit der Option '-L' verringert meistens die Geschwindigkeit
+    (v.a. beim Auspacken), außer evtl. beim teilweisen Auspacken eines Archivs.
+    Hingegen erhöht die Option '-L2' meistens die Geschwindigkeit, außer eben
+    bei o.g. Fall. Im Gegensatz zu älteren Versionen empfiehlt es sich, immer
+    mit dem lh5-Algorithmus zu arbeiten, da er die besten Packraten sowie die
+    höchste Geschwindigkeit bietet.
+    Ebenso wird die Geschwindigkeit beim Auspacken durch die Option '-C'
+    zwischen 20% und 100% beschleunigt, da die Prüfsummenbildung ausgeschaltet
+    wird. Diese Option sollte aber nur gesetzt sein, wenn sichergestellt ist,
+    daß die Archive korrekt sind, also z.B. beim Maustausch.
+    Ein aktiver Paßwortschutz verringert die Geschwindigkeit beim Auspacken um
+    bis zu 35%, beim Einpacken ist der Unterschied unbedeutend.
+    Auch eine konsequente Nutzung der Option '-U' bzw. der Environment-Variab-
+    len UNPACKED kann das Einpacken von Dateien spürbar beschleunigen, indem
+    Dateien, die sich schlecht oder gar nicht packen lassen, sofort ungepackt
+    in das Archiv übernommen werden. Dabei darf allerdings nicht die Option
+    '-5' (bzw. '-52',-'l2' und '-o2') gesetzt sein, welche IMMER (!) für eine
+    optimale Packrate sorgt.
+    Ebenso kann ein guter Platten-Cache wie z.B. TCache 6.x die Bearbeitung
+    sehr stark beschleunigen, wobei dies jedoch stark von der Anwendung und
+    der Größe der zu bearbeitenden Dateien abhängt.
+
+
+  Kurzanleitung zu LHarc:
+ =========================
+
+Einpacken von Dateien:
+
+    LHarc a Archiv Dateien
+
+    Alle Dateien werden in die Datei 'Archiv.LZH' komprimiert. 'Dateien' be-
+    zeichnet die Dateien, wobei auch Pfad- und Laufwerksangaben gemacht werden
+    können. Ebenso können Wildcards (s.o.) vewendet werden. Wenn alle Dateien
+    bearbeitet werden sollen, kann 'Dateien' ganz weggelassen werden.
+
+    Es empiehlt sich, LHarc mit der rechten Maustaste aus einem anderen Fenster
+    anzuklicken, während man sich in dem Ordner mit den Daten befindet, so wird
+    nicht der komplette Pfad abgespeichert und die Dateien können in einen an-
+    deren Ordner wieder entpackt werden.
+
+Einpacken von Dateien und anschließendes Löschen der Datein:
+
+    LHarc m Archiv Dateien
+      |
+    Dieses Wort bei Aufruf über GEM-Desktops nicht mit eingeben, LHarc
+    wurde angeklickt und muss deshalb nicht mehr eingegeben werden.
+
+Einpacken von Datein mit untergeordneten Ordnern:
+
+    LHarc a -r Archiv  Dateien
+
+    Es werden alle Ordner rekursiv durchsucht und alle Dateien mit
+    dem Ordnernamen eingepackt. Hier empfiehlt es sich besonders,
+    als oberstes Fenster das Datenfenster zu haben.
+
+Auspacken von Dateien:
+
+    LHarc x Archiv Dateien
+
+    Hier MUß der Ordner für die Daten das oberste Fenster sein.
+
+Auspacken von Daten mit untergeordneten Ordnern:
+
+    LHarc x -x Archiv Dateien
+
+    besser:
+
+    LHarc x -xm Archiv Dateien
+
+    Es gilt das oben gesagte. In der 2. Variante wird nicht bei jedem
+    neu zu erzeugenden Ordner gefragt, ob dieser angelegt werden soll.
+
+Anzeige des Inhalts eines Archivs:
+
+    LHarc v Archiv Dateien
+
+    Der Inhalt wird mit Ordnern angezeigt.
+
+Wenn Sie mit dem Desktop in einer TOS-Version vor MultiTOS bzw. ohne MiNT
+arbeiten, sollten Sie hinter jeden Befehl '-h' scheiben, damit LHarc auf
+einen Tastendruck wartet, bevor die Fenster und der Desktop wieder aufge-
+baut werden. (z.B. 'a -h Test')
+

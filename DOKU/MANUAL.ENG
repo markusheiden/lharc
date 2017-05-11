@@ -1,0 +1,1314 @@
+THE EXPLORER'S GUIDE TO LHarc
+
+It sometimes seems that versions of LHarc proliferate like rabbits, while
+documentation, especially in English, is as rare as hen's teeth and what
+there is is neither up to date nor comprehensive. This guide attempts to
+throw some light on the subject and to provide a comprehensive guide to
+LHarc 2.01, now the most commonly available version, with additional
+information on the newest version 3.20 junior.
+
+CONTENTS
+
+        1.0 BACKGROUND
+        2.0 VERSIONS
+        3.0 GETTING STARTED WITH VERSION 2.01
+        4.0 USING LHarc 2.01
+        5.0 PARAMETER USAGE
+        6.0 COMMANDS
+        7.0 TEMPORARY FILES
+        8.0 SHELLS AND COMMAND LINE INTERFACES
+        9.0 VERSION 2.20 and newer
+
+
+1.0 BACKGROUND
+
+LHarc has its origins in the world of MSDOS and UNIX and has been ported to
+the ST by people like Jon Webb, Thomas Quester and Haruyasu Yoshizaki who
+have put their versions in the public domain. Files are compressed using
+the Lempel-ziv and Huffman algorithms which give it its name and file
+extender (lzh) The archives themselves are portable across platforms at
+least in principle; it is the archiving utility programmes that have to be
+ST specific.
+
+LHarc set out to produce more compact archives than ARC, at the expense of
+being slower. New versions of both have changed the picture to some extent;
+in particular, new versions of LHarc are much faster. In the PC world, and
+now in that of the ST, Zip is challenging LHarc's position; it is fast,
+compacts well and on the ST offers a user-friendly interface, allowing
+files for archiving or extraction to be picked from a list and repeat
+operations to be carried out without leaving the programme.
+
+2.0 VERSIONS
+
+There are three compression algorithms in the LHarc family corresponding to
+three groups of programmes: identifying which you have is not always easy.
+
+2.1     LARC
+This does not use huffman encoding hence the missing h; it produces larger
+files but packs and unpacks much faster than LHarc (only in versions <= 2.01).
+This method is used in PFXPAK, a shareware programme packer by Thomas Quester.
+The programme LARC itself is obsolete as LHarc 2.01 offers this compression
+method with the /l switch.
+
+2.2     lh1
+
+The original lh1 algorithm is used by Jon Webb's LHarc.PRG (current
+version, .51 or 0.6), a TOS programme which obligingly presents a list of
+commands with a command line at the bottom. The list is comparatively
+simple with only six switches:-
+
+------------------------------------------------------------------------------
+LHarc-ST, Archive utility, Version 0.51β, compiled on 17/11/89 at 15:12:58
+
+  Usage: LHarc command archive [filenames]
+< Commands >
+     a - Add file(s) to archive          p - Extract to printer
+     m - Move file(s) to archive         l/v - Short/Verbose list of archive
+     e/x - Extract file(s) from archive  d - Delete file(s) in archive
+     i - Extract with inquiry            r - Rename file in archive
+     s - Extract to screen               t - Test archive integrity
+< Switches >
+     h - Hold after command              b - Retain backup copy of archive
+     o - Overwrite existing files        n - No compression (store only)
+     f - Floppy/TurboDos check off       c - Add comments
+------------------------------------------------------------------------------
+
+Thomas Quester's LHarc.ttp version 1.316 is regarded as the definitive
+programme for the lh1 process. Its usage is similar to version 2.01.
+
+2.3     lh5
+
+The newer, faster lh5 algorithm is supported by Thomas Quester's 2.01,
+usually named LHarc.TTP or LHAR201?.TTP, currently at version l. This uses
+lh5 by default, but extracts either lh1 or larc without question and will
+pack them if the right switches are used.
+
+The newest arrival on the scene, in May 94, is Lharc 3.10 by Christian
+Grunenberg and others, based on 2.01l and using the same commands but with
+additional switches, the more extensive UNIX wildcards,a built in GEM-
+interface and self-extracting files! It is spectacularly faster.
+The following timings were for packing and unpacking the package of
+programm and text files, totalling 261772 bytes, by which LHarc 2.20 was
+distributed.
+
+                                Time mins:secs
+                                Pack    Unpack  Size
+                                ----------------------
+        STZIP("deflate best")   1:23    18      118763
+
+        LHarc 2.01              2:06    33      120925
+
+        LHarc 3.10              1:09    12      120901
+
+Source files and the archive were both on a ramdisk and timings were
+taken from clicking ok from the command line or the STZIP screen using a
+desktop clock.
+
+Many of the new switches are about naming files and seem intended to cope
+with MiNT/ MultiTOS conventions. Some of the changes are drastic enough to
+make it inadvisable to use existing shells. Version 3.10 junior corrects a
+few bugs and adds some additional features. Anyway - use LHarc 3.10 and its
+built in GEM-interface!
+
+The remainder of the text is about using Version 2.01; variations for 2.20
+and newer versions are appended at the end.
+
+3.0 GETTING STARTED WITH VERSION 2.01
+
+Documentation for this programme consists of a German manual (MAN.DEU) an
+English manual (MAN.ENG), not as comprehensive as MAN.DEU, the README and
+LIESMICH files containing installation instructions and the revision
+history and LHarc.DOC, a brief introduction in German. There is also
+ALGORITHM.DOC explaining the compression methods used.
+
+Like many PD authors Thomas Quester asks that his programme should always
+be distributed with documentation. He goes to greater lengths than most,
+distributing LHarc as a packed programme (using PFXPAK) with the manuals
+(MAN.DEU, or if you are very lucky MAN.ENG) appended in compressed form - a
+combination of packed file and archive. PD libraries and Bulletin Boards
+often break this up and distribute the files separately with or without the
+manual. I have never knowingly seen this file though I have a much larger
+one of the same kind which came with my registered version of PFXPAK.  If
+your LHarc seems rather large it may be one of these compound files. It
+runs in the normal way as an archiving programme, but will put on screen
+the message:
+
+LHarc beinhaltet noch einige Dateien.   Auspacken mit  x -rm LHarc.TTP
+        or
+LHarc könnte noch einige Dateien enthalten. Auspacken mit Paramter LHarc.TTP
+
+        This means:
+
+LHarc contains some files.              Unpack with   x -rm LHarc.TTP
+
+meaning that the files can be unpacked, to the current directory, by giving
+LHarc its own name as a parameter.
+
+The LIESMICH or README file if you have it, contains instructions for
+producing a smaller, working copy of the programme alone without this
+message: however it is possible to delete the files still leaving the
+message, so nothing can be taken for granted.
+
+4.0 USING LHarc 2.01
+
+LHarc is a ttp programme, presenting that daunting empty parameter box when
+run from the desktop. It carries out one command at a time then exits. If
+you make a mistake you have to type the command again; it keeps no history
+of the commands given. No more than 38 characters may be typed on the
+command line. Long chains of switches or extended path names quickly eat
+this up.
+
+If you want to make repeated use of the programme, it is worth copying it
+to a ramdisk for faster operation, particularly if you have no hard drive:
+this will also enable you to keep data and archive disks in the floppy
+drive. It may be worthwhile creating the archive on ramdisk if yours is big
+enough, particularly if you are carrying out repeated alterations resulting
+in the archive being constantly updated.
+
+If no parameters are passed it displays the following on pressing <return>:
+
+
+LHarc Version 2.01l (Atari ST)  Copyright (c) Haruyasu Yoshizaki, 1988-89.
+                                         Optimiert von Thomas Quester    1989-91
+================================================================        03.07.91  ===
+                <<< High-performance file-compression program >>>
+===============================================================================
+  Aufruf: LHarc  [<Kommando>] [{{/|-}{<Schalter>[-|+|2|<Option>]}}...] <archive>
+                 [{<Laufwerk>:}|{<Hauptvezeichnis>\}] [<Pfad> ...]
+-------------------------------------------------------------------------------
+<Kommando>
+     a: Dateien an Archiv anfügen       u: Dateien im Archiv erneuern
+     f: Dateien anfügen, wenn neuer     m: Datei in das Archiv 'moven'
+     d: Dateien aus Archiv löschen    e,x: Dateien aus Archiv extrahieren
+     p: Dateien aus Archiv anzeigen   l,v: Dateiliste des Archivs
+     t: Archiv testen                   c: Dateien für AFX komprimieren
+  <Schalter>
+     r: Mit Ordnern packen/entpacken    w: Arbeitsdirectory bestimmen
+     x: Erweitere Dateinamen            m: Beantworte alle Fragen mit Ja
+     p: Unterscheide Ordnernamen        c: Kein Vergleich des Dateidatums
+     a: Erlaube bel. Dateiattribute     v: Dateien mit anderem Prg ansehen
+     n: Keinen Prozessindikator zeigen  h: Warte auf Tastendruck vor exit
+     t: Archivdatum setzen              y: Nur dateien mit Archive bit packen
+     b: Wie y, Archivbit wird gelöscht  l: Erzeuge Larc-kompatibles Archiv
+     d: Unterdrücke ALLE Ausgaben       o: Erzeuge 1.13-kompatibles Archiv
+     u: Ungepackt speichern             k: Erzeuge Kompatible Header
+     e: Mit Kommentaren archivieren     5: Zwinge lh5-Archiv
+     s: Wandle \ in / um
+===============================================================================
+  (Eine genaue Anleitung finden Sie im User-Manual.)
+  Wenn Sie Yoschi erreichen wollen: Nifty-Serve  PFF00253
+                                        oASCII-pcs       pcs02846
+  Wenn Sie Thomas Quester  UUCP the.fawn@mcshh.hanse.de
+  erreichen wollen:        Maus Thomas Quester @ HH
+                           Tel./BTX (040) 720 54 31
+
+
+
+The line:
+
+Aufruf: LHarc  [<Kommando>] [{{/|-}{<Schalter>[-|+|2|<Option>]}}...] <archive>
+                 [{<Laufwerk>:}|{<Hauptvezeichnis>\}] [<Pfad> ...]
+
+is a concise summary of the syntax of the command line; in English it is
+almost as cryptic:
+
+Usage LHarc [<command>] [{{/|-}{<switch>[-|+|2|<option>]}}...] <archive_name>
+                [{<drive_name>:}|{<home_directory_name>\}] [<path_name>  ...]
+
+        LHarc used only from a command line or another programme;
+                do not use when run from the desktop
+        <>      parameter name
+        []      optional parameter
+        |       (shifted \) alternative
+        {}
+
+Parameters must be separated by spaces; the only essential parameter is the
+archive name. LHarc will use default values for all the others. The order
+must be as shown except that switches can be placed anywhere after the
+command. LHarc is insensitive to case except in switches which must be
+lower in version 2.01; 2.20 and newer versions use upper case switches as
+well; it also insists on switches immediately following the command.
+
+For clarity we shall call the files to be archived "source" files, lzh
+files "archive" files, and the files in the archive "archived" files.
+
+Hitting 'Ctrl-C' at any time will abort LHarc's current operation and
+return you to the desktop. It may leave temporary files lying around if you
+do so. 'Ctrl-S'and 'Ctrl-Q' will pause and resume operations, which is
+useful for reading scrolled listings.
+
+(#9.1), etc refers to changes in versions newer than 2.20 described in
+section 9.0.
+
+5.0     PARAMETER USAGE
+
+5.1     <Command>:
+
+A command tells LHarc what to do. It must be the first parameter given and
+only one is allowed on each command line. If none is given, extraction,
+"x",  is implied. If a command is placed other than at the beginning of the
+line, LHarc will extract files, interpreting the command as some other
+parameter, eg an archive called "a".
+
+5.2     <Switch>:
+
+Switches modify the action of commands or the way the LHarc runs. They are
+identified by the delimiter "/" or "-" and may be placed anywhere except
+before a command. (#9.1)
+
+Some switches are automatically set by commands:
+        the command "v" sets the switch "/x" for extended file names;
+        or other switches - "/r" sets "/x3".
+
+The switch letter is a toggle (#9.1) which reverses the current state.The
+default is off but this may have been altered:
+
+        1) by a previous switch in the same command line, whether
+        written or implied by another switch or command,
+        or
+        2) by an environment variable set by a shell programme or cli.
+
+Thus    /xx     sets and unsets extended filenames;
+        /rx     sets LHarc to search folders then tells it not to use
+                extended filenames
+
+"+" or "-" following the switch set it unambiguously on or off; if in
+doubt use these. Several switches may be selected by typing them
+continously after the delimiter: eg /rhc. Otherwise type / before each
+switch. /w and /v must be at the end of such sequences as they may take
+further arguments.
+
+5.3 SELECTION PARAMETERS
+
+The remaining parameters concern identifying files and paths. LHarc will
+look for a file in the current drive and directory unless its name is
+preceded by a drive letter and/or path.  In GEM terms the current directory
+is the active window on the desktop from which programmes are normally
+launched.
+
+[If you are using a command line interface this will be familiar; if you
+are using an archive shell you will never be aware of it at all.]
+
+You can run a programme from an inactive window using the right, or
+cinderella, button:
+
+        Open the programme window containing LHarc.
+        Open the window you want to make current - most usefully the one
+         where files will be read from or written to - making this the
+         active window;
+        Move the mouse to the programme window;
+        Holding down the right button, double click with the left.
+
+You may also specify a file not in the current directory by typing in the
+drive and/or pathname on the command line:
+
+ The conventions of MSDOS apply:
+
+        D:              drive "D"
+        \path\          path beginning at the root of the current or
+                        specified drive
+        path\           path starting from the current directory or
+                        from the last used directory of the specified
+                        drive.
+Thus:
+        D:arc           the archive "arc" in the last used directory
+                        of drive D:
+        \arc            the archive "arc" in the root directory of the
+                        current drive
+        path\arc        the archive "arc" in the subdirectory "path"
+                        of the current window.
+
+
+5.4     <ARCHIVE>:
+
+This is the only essential parameter: given an archive name,
+Lharc will unpack all the files in the named archive to the current
+directory.
+
+The parameter must include the archive name; the extender .lzh is implied
+and need not be written unless the archive has some other extender or
+has a single letter name which could be confused with a command. Self-
+extracting files with .TOS extenders can be viewed or extracted if the
+extender is given. Only one archive parameter is allowed and LHarc can,
+naturally, write to only one archive at once, which must be given a full
+name. However, LHarc will read or extract from multiple archives identified
+by wildcards: eg "a*" means all lzh files beginning with "a" and "*" means
+all archives in the current or specified directory.
+
+          LHarc e * *.c
+
+        Extracts all files with extension .C from all archives in
+        the current directory.
+
+
+The next two parameters, <DRIVE/HOME DIRECTORY> and <PATH> are both
+concerned with the location and selection of files (not archives) to be
+archived or read from archive. Without either parameter LHarc will read
+files from and write them to the current directory and will select all
+files as though *.* had been typed. The distinction between these parameters
+can be confusing.
+
+5.5     <DRIVE/HOME DIRECTORY>:
+
+This parameter substitutes a new directory for reading and writing files in
+place of the current one; it contains a drive letter followed by a colon
+and/or a path specification ending with  \.  Leading "\"s follow the same
+convention as described above. If the final ":" or "\" is omitted the
+parameter will be read as <PATH>. The path defined here will not be
+included in extended file names. (#9.3)
+
+5.6 <PATH>:
+
+This is a misleading name as there may be no path element at all; if
+used at all the parameter must contain a filename or wildcard
+specification, to identify the file(s) to be archived, listed or extracted.
+A path specification is used:
+
+1)      in archiving, to identify the directory where files are to be
+        found: unlike the <home> parameter, the path will be included in
+        extended filenames. If a drive name is specified it will override
+        any path set in the <HOME> parameter, as will a leading \.  A file
+        archived with a leading \ will be extracted to the root directory,
+        regardless of any <home> setting, unless the /p switch is set.
+
+2)      in reading archives, to identify the files to be selected.
+
+If no file name or specifier is used after a '\' the parameter will be read
+as <HOME>.  This and <switch> are the only parameters which can be repeated
+on the same command line.
+
+EXAMPLES: " ~ " = space
+
+        a ~ path1\arc ~ a:path2\ ~ path3\*.prg ~ *.ttp ~ /hr
+
+<command>       a               add to or create
+<archive>       ~ path1\arc     archive "arc" in the subdirectory "path "
+                                of the current window;
+<home>          ~ a:path2\      look for files in the current directory of
+                                drive A: ignore this path name in extended
+                                filenames;
+<path>          ~ path3\*.prg   archive all "prg" files in the
+                                subdirectory "path" of the directory just
+                                set;
+<path>          ~ *.ttp         and all "ttp" files in the home directory;
+<switch>        ~ /h            hold the screen on finishing (so you can
+                                see the error message)
+                  r             and search subdirectories in the specified
+                                file path saving files with with extended
+                                file names.
+
+
+If the third space is omitted,
+
+       a   ~ path1\arc ~ a:path2\path3\*.prg ~ *.ttp ~ /hr
+  <command>  <archive>   <path>                <path>  <switch>
+
+the third parameter becomes a <path>; the same *.prg files will
+be selected but saved with a longer pathname: "path2\path3\*.prg". The
+following parameter will now archive all ttp files on the current directory
+- usually the one where LHarc is.
+
+If you make "a:path2\" the active window, and run LHarc from another window
+using the right mouse button, you can omit the <home> command saving some
+space on the command line
+
+        a ~ path1\arc ~ path3\*.prg ~ *.ttp ~ /hr
+  <command>  <archive>  <path>        <path>  <switch>
+
+Alternatively, with path2's window open, though not necessarily
+active, provided LHarc.ttp is not on the same drive as path2, then:
+
+        a ~ path1\arc ~ a:path3\*.prg ~ a:*.ttp ~ /hr
+  <command> <archive>   <path>          <path>    <switch>
+
+will direct LHarc to search path2\ of drive A: for source files, achieving
+the same result. Note that the drive identifier a: has to be repeated in
+both <path> parameters: it will not be stored with the file names.
+
+6.0 COMMANDS
+
+Having discussed the syntax of parameters we will now look at what the
+commands and switches do.
+
+Commands fall into several groups:
+
+6.1  Input commands:
+
+Compress files and store them in a named archive which will be created if
+it cannot be found.  The extension lzh is assumed: if you specify a
+different extension, LHarc will prompt you whether to use it with the
+message
+ "Extension of archive is not '.' Continue processing? [Y/N]".
+Note that LHarc will not attempt to compress the named archive itself so it
+does not matter if it is in the same path as the source files.
+
+6.1.1   a       add
+
+        adds files to the archive, overwriting existing files with the same
+        (extended) name. No prompt is given before overwriting.
+
+6.1.2   m       move
+
+        as a but deletes the source files.
+
+6.1.3   u       update
+
+        adds files as a but overwrites only those with an earlier date.
+        LHarc will declare what file names have been matched but, if none
+        of the archived files have an earlier date, will exit without
+        further action or warning.
+
+6.1.4   f       freshen
+
+        updates files already in an archive with newer versions.
+
+6.1.5   c       compress
+
+                compresses single files for unpacking by AFX
+
+Source files may be specified by means of the <home> and <path> parameters.
+
+Switches:          l,o,k,u,5  r,c,a,y,b,  x,e,t,w,      m,n,d,h
+
+LHarc will normally use lh5 as a compression method; the following switches
+select alternatives which you may use if you anticipate your archive being
+read by other utilities:
+
+                (commands: a|u|m|f )
+
+6.1.10  /l      Makes Larc archives.
+
+         This format, the same as PFXPAK uses, produce archives are longer
+         by about 5% but extract much faster.
+
+6.1.11  /o      Uses the lh1 algorithms; ("LHarc 1.13 compatible")
+
+        For use with LHarc 1.13  and earlier versions of LHarc and with
+        UNLZH and LHXARC.
+
+6.1.12  /k      Compatible headers
+
+        LHXarc and early versions of LHarc cannot extract files with the
+        extended headers used by LHarc2.x. Using /ok you can make
+        compatible headers. (#9.5/k)
+
+6.1.13  /u      Archives files without compression:
+
+         if you are adding packed programmes or other compressed files to
+         an archive there is little to be gained by attempting further
+         compression except that time will be taken in packing and
+         unpacking. You can also add a short comment file to an archive
+         which can be read by running the archive from the desktop or in a
+         text editor.  (#9.5/U)
+
+6.1.14  /5      Forces compression by lh5
+
+        LHarc will normally not attempt to compress already packed files
+        (see switch /U). This switch tells LHarc to try to compress any
+        files. This will slow down LHarc but the compression-ratio will be
+        better.
+
+These switches affect the selection of files to be archived:
+
+6.1.20  /r[-|+|2] (Recursively collect files)   (commands: a|u|m|f)
+
+        by default LHarc compresses the files in the directory identified
+        by the <home> or <path> parameters, or failing that the current
+        directory; it does not look for files in subdirectories.
+
+        The /r switch instructs it to search subdirectories
+
+        a|u|f|m] /r[+] ARCHIVE
+
+        Adds to 'ARCHIVE' all files in the current directory and its
+        subdirectories.
+
+        a|u|f|m] /r[+] ARCHIVE *.c
+
+        Adds to 'ARCHIVE' all files in the current directory and its
+        subdirectories with a 'c' extender.
+
+        a|u|f|m] /r[+] ARCHIVE doc\*.*
+
+        Adds to 'ARCHIVE' all files in the directory doc and its
+        subdirectories. The same can be achieved without filenames or
+        wildcards in the pathname doc by:
+
+        a|u|f|m] /r2 ARCHIVE doc
+
+        See (9.5/r)
+
+The /r and /r2 switches set the /x switch simultaneously, so that in all
+these examples extended file names will be stored, starting at the
+beginning of <path>. You may toggle the /x switch off (with /x-) after
+using /r to tell LHarc not to store directory names. If LHarc then finds
+source files of the same name it will overwrite previously archived files,
+after comparing their date stamps if commands u,f are in use.
+
+You can use the /r switch to archive files with the same file name by
+recursively searching directories.  Thus, with the directory shown below
+
+                        |
+                       -\-
+                        |
+                       -TC-STAT.H
+                        |
+                -----------------
+                -BIN- -LIB  -INCLUDE
+                  |     |       |
+                              -SYS-
+                                |
+                             -STAT.H
+
+          LHarc a /r ARCHIVE stat.h
+
+adds two 'stat.h' files, with path names, to 'ARCHIVE': one from the root
+directory and the other from the directory \tc\include\sys\.
+
+See 6.1.30 for /x.
+
+6.1.21  /c[-|+] (skip time-stamp Comparison)    (commands: e|x|u|f).
+
+        overrides the time stamp comparison in u and f.
+
+
+6.1.22  /a[-|+] (allow any Attribute of files)  (commands: e|x|u|f).
+
+        This switch tells LHarc to archive/extract files with the
+        hidden or system attribute which it would otherwise ignore.
+
+6.1.23  /y      (Archive bit)                   (commands: a|u|m|f)
+
+        Only select files with the archive bit set. The archive bit is set
+        whenever a file is created or modified. Some back up utilities and
+        the /b switch "unset" it so unchanged files can be identified at
+        the next back-up.
+
+        a -ry *.*
+
+        Will archive all files that have been changed since their archive
+        bit was unset.
+
+6.1.24  /b                                      (commands: a|u|m|f)
+
+        Like y, but the archive bit of the source file is reset.
+
+        If you archive a file using this switch, then attempt to repeat the
+        process with this or the /y switch no files will be found.
+
+
+These switches govern the information stored with the archived files:
+
+6.1.30  /x[-|+] (allow eXtended file names)    (commands: a|u|m|f|e|x)
+
+        By default, LHarc stores the file names of source files without the
+        names of the directory(s) in which they reside.  This switch tells
+        LHarc to include directory names and to extract archived files
+        together with stored directory names, creating the necessary
+        folders. (#9.5/x)
+
+        Example: Suppose you are in the root directory, '\' and you have
+        two files 'stat.h' and '\tc\include\sys\stat.h':
+
+          LHarc a ARCHIVE stat.h
+
+        Adds only the file 'stat.h' from the current (root) directory to
+        'ARCHIVE', but
+
+          LHarc a ARCHIVE stat.h \tc\include\sys\stat.h
+
+        Will cause LHarc to abort with the message "Same names in
+        another path", because directory names are normally disregarded
+        when storing file names.  However,
+
+          LHarc a /x ARCHIVE stat.h \tc\include\sys\stat.h
+
+        Adds both files to 'ARCHIVE'. Then,
+
+          LHarc e ARCHIVE stat.h
+
+        Extracts both 'stat.h' files to the current directory and compares
+        their time stamps and if one is newer, then LHarc will prompt you
+        with the message "'STAT.H': Already exists. Overwrite? [Y/N]".
+
+          LHarc e /x ARCHIVE stat.h
+
+        Extracts both 'stat.h' files; one to the current directory and the
+        other to the directory \tc\include\sys\. If this directory does
+        not exist, then LHarc will prompt you whether to create it.
+
+6.1.31  /e[-|+] (comment)                       (commands: a|u|m|f)
+
+        Adds a comment to the archived which will be displayed by the v or
+        l /x commands. (#9.5/z)
+
+6.1.32  /t[-|+] (Time Stamp)                    (commands: a|u|m|f)
+
+        The archive file is normally given the time and date of its
+        creation. This switch sets the time stamp of the archive to that of
+        the newest file in the archive.
+
+         a /t ARCHIVE file1.ext
+
+
+6.1.33  /w[-|+|<directory_name>] (Working directory) (commands: a|u|m|f)
+
+        When  modifying an existing archive LHarc creates temporary files
+        in the same directory as the archive, deleting them afterwards.
+        (See 7.0) Using the /w switch:
+
+        a /wd:\temp ARCHIVE file1.ext file2.ext ...
+
+        creates these files in the directory \temp\ on drive D:.  If no
+        directory name is specified, temporary files will be created in the
+        current directory.
+
+        Specifying a ramdisk with this switch can speed up operations
+        considerably; it is also useful when you have no room on the disk
+        where the archive is.
+
+        This switch overrides any working directory specified in an
+        environment variable (see 8.0)
+
+
+6.2 Output commands:
+
+Expand files from a named archive recreating them on disk: archived files
+may be specified using the <path> parameter and the destination for
+extracted files by the <home> parameter. If files of the same name are
+found LHarc will prompt "Overwrite? [Y/N]". Version l gives the option to
+rename.  The contents of self-extracting files with .TOS extenders can be
+extracted if the tos extender is included in the archive name.
+
+6.2.1   e,x extract:
+
+Switches:          x,p,c,l,u,  m,n,d,h
+
+6.2.10  /x[-|+] (allow eXtended file names)    (commands: a|u|m|f|e|x)
+
+        See above (6.1) for this switch
+
+        Running LHarc with no command is equivalent to:
+
+        e (or x) /x
+
+        if you don't want files extracted to directories use /x- (or /x as
+        it is a toggle) with no command or use the x or e command.
+
+6.2.11  /p[-|+] (distinguish full Path names) (commands: e|x)
+
+        When extracting LHarc will search for the specified files
+        regardless of extended filenames. This switch tells LHarc to
+        distinguish files by full path name during un-archiving. (#9.5/p)
+
+        Example: Suppose your archive 'tc' contains both 'stat.h' and
+        'sys\stat.h'.   Then,
+
+          LHarc e tc stat.h
+
+        Extracts both 'stat.h' files to the current directory and the older
+        one will be overwritten by the newer one, whereas
+
+          LHarc e /p tc stat.h
+
+        Extracts only 'stat.h' to the current directory and ignores
+        'sys\stat.h', because its path name is not specified.
+
+        If you specify a path names without the /p switch, LHarc will
+        extract only those files from your archive, but it will otherwise
+        disregard stored directory names.  (If you want to extend file
+        names with directory names, use the /x switch.)
+
+          e tc sys\stat.h
+
+        Extracts only 'sys\stat.h' to the current directory.
+
+
+6.2.12  /c[-|+] (skip time-stamp Comparison)    (commands: e|x|u|f).
+
+        /c ARCHIVE [file1.ext file2.ext ...]
+
+        When extracting if LHarc finds an existing file with the same name
+        in the destination directory it will compare the time stamp of
+        the two files, and so some files will be overwritten and some just
+        ignored. This switch tells LHarc to overwrite any existing files
+        with extracted ones with the same name.
+
+
+Two switches are concerned with reading Lzh archives from Unix sources
+
+6.2.20  /s      Convert / to \                          (commands: e|x)
+
+        Unix uses / as a directory delimiter instead of /. This switch
+        converts / to \ enabling Unix directory paths within extended
+        filenames to be interpreted in the ST environment.
+
+6.2.21  /u      Extract Unix 1.0 archives               (commands: e|x)
+
+        Used when extracting, this switch jumps over the header-checksum-
+        test, so that archives from Unix 1.0 can be extracted. (Unix
+        permits longer filenames than MS/GEMDOS.) Use when 'No files' shows
+        up during extraction. (Should also be able to extract archives with
+        comments). (#9.5/C)
+
+        More recent versions of LHarc cope with Unix type filenames by
+        truncating them and also support comments, so this switch may be
+        redundant, but it is worth remembering if you have trouble or are
+        using an older version of LHarc (<2.00).
+
+
+6.3 Internal commands
+
+Work on archived files in a named archive; files within the archive may be
+specified using the <path> parameter
+
+Switches:          x,v(p only),  n,d,h
+
+d delete
+
+        deletes named archived files which must be identified by the <path>
+        parameter; this command will not delete a whole archive by default,
+        though it will with *.*. No prompts are given.
+
+
+6.3.1   l (List files in archive)
+
+          LHarc l ARCHIVE
+
+        Lists the files in 'ARCHIVE' including name, original size, stored
+        size, compression ratio, date and time, attributes, compression
+        type and CRC check using one line to each file. A '+' before a file
+        name indicates that a directory name is stored with the file name.
+        (The /x switch or v command display directory names.)
+
+        The path parameter will filter the files to be listed
+
+          LHarc l ARCHIVE *.c *.h readme.doc
+
+        Lists information on all the .C, .H and README.DOC files
+        in 'ARCHIVE'.
+
+6.3.2   v (View list of files in archive)
+
+          LHarc v ARCHIVE
+
+        is equivalent to:
+
+          LHarc l /x ARCHIVE
+
+        Lists information as l but each file takes two lines: the first for
+        the full path name and the second for the rest of the information,
+        including comments.
+
+6.3.3   t (Test integrity of archive)
+
+          LHarc t ARCHIVE
+
+        Tests the integrity of 'ARCHIVE' by running a CRC check on each
+        file and comparing the result against the file's stored CRC value.
+
+6.3.4   p show file
+
+        displays on screen the contents of files specified
+        by means of the <path> parameter.
+
+6.3.40  /v[-|+|2|<path\utility.ext>] (View file by another utility)
+
+        LHarc creates an un-archived file 'LHarc.TMP' and displays it using
+        the specified utility, usually a text editor or file viewer. You
+        must give the full name of the utility with the extension, though
+        you may use wildcards such as r*.* to invoke "read.prg" If no
+        utility is specified the default is one called "less.ttp". You may
+        rename your favourite file viewer accordingly. 'LHarc.TMP' is
+        deleted after you have viewed it. The benefit of this is that you
+        can use all the features of the utility to scroll through the text,
+        save, print, search, etc.
+        (#9.5/v)
+
+        LHarc p /vread.prg ARCHIVE.LZH file1.ext
+
+        Invokes READ.PRG for paged display of 'file1.ext' to the screen,
+
+        LHarc p /v2 /vread.prg ARCHIVE.LZH file1.ext
+
+        as before but /v2 suppresses the output of file names or path
+        names.  This option is provided for viewing binary files with a
+        dump utility.
+
+Output from l,v and p , including LHarc's own messages, may be redirected
+to a file by >"filename", to the printer (parallel port) by >prn: and to
+the serial port by >aux:  The final colon is essential, otherwise LHarc
+will direct output to a file called "prn". Using /d will suppress
+LHarc's messages but not the filename. (#9.4)
+
+You may also append to a file using >>, but the process is so slow I
+recommend you only use this if you are about to take a holiday. If you use
+MORTIMER's print spooler you can achieve the same effect by directing
+output to prn: or aux: with the printer off-line, and then retrieving the
+contents of the spooler into the editor using 'Ctrl-X'.
+
+The screen display with these commands may be paused by 'Ctrl-S' and
+resumed with 'Ctrl-Q'.
+
+
+6.4 The following switches apply to most commands:
+
+6.4.1   /m[-|+] (no Message for query)
+
+        [<command>] /m ARCHIVE [file1.ext file2.ext ...]
+
+        Before altering files or directories, or before creating
+        an archive with a extension other than LZH, LHarc will query you
+        with messages like "Overwrite? [Y/N]". This switch suppresses these
+        messages and tells LHarc to proceed as if "y" is typed in.
+
+6.4.2   /n[-|+] (No Indicator)
+
+        Suppress progress display ****... when archiving and de-archiving.
+        This display is on even when output is redirected to printer or
+        file.
+
+6.4.3   /d[-|+] (suppress screen display)
+                         (#9.5/q- do not use with version 2.20 or newer!)
+        LHarc will write nothing to the screen while working.
+
+6.4.4   /h[-/+] (hold screen)
+
+        With /h LHarc waits for a key before returning to desktop
+        enabling messages to be read.
+
+6.4.5   /q      Quick compression
+
+        Not currently supported
+
+There is also an as yet unimplemented command s to create self extracting
+archives. (Use the shell or 'MAKE_SFX` to create self-extracting archives)
+
+7.0 TEMPORARY FILES
+
+When creating or amending an archive LHarc creates temporary files in the
+same directory as the archive, unless told by means of the /w switch to
+write them elsewhere. These are:
+
+        LHarc.)1(       Original archive, renamed.
+        LHarc.)2(       Work file used to create new archive.
+
+        If a file with one of these file names already exists in the working
+        directory, then the behaviour of LHarc is unpredictable.
+
+If the process is aborted by 'Ctrl-C' or through an error the original file
+can usually be recovered by renaming LHarc.)1(.    LHarc.)2( may also
+be usable though the last file written to it is likely to be incomplete.
+
+        LHarc.TMP       Work file created for viewing by another utility.
+
+8.0 SHELLS AND COMMAND LINE INTERFACES
+
+Shells make using LHarc easier by allowing choices to be set up from a
+menu though they may not enable all the facilities of LHarc to be used and
+may become out of date as LHarc itself is amended. ARCshell 3.1 gives good
+support to LHarc but is itself quite daunting to understand as a result.
+Other shells give more limited support.
+
+Command line interfaces allow LHarc to be called from their command line
+and may allow the use of batch files or the recall of commands by
+scrolling back through the command list.
+
+You may also set LHarc's default switches with the environment variable
+'LHarc':
+
+          SET LHarc=/we: /r
+
+        will set drive E: as the working directory and archive all
+        files in recursive mode.
+
+You may also specify LHarc's working directory with the environment
+variable 'TMP':
+
+          SET TMP=E:
+
+        but the /w switch will override this setting.
+
+        Result Codes
+
+        LHarc returns the following result codes to the parent process:
+
+        0   Normally finished.
+
+        1   Process finished with nonexistent file names ignored
+        during archiving or CRC error occurred during
+        un-archiving.
+
+        2   Process terminated by fatal error; no archive created
+        or files moved.
+
+        3   Unable to write temporary files into the archive. Work
+        file renamed to 'LHarc.)2(' and original archive
+        deleted.  Try renaming LHarc.)2( as your archive,
+        although it might be damaged.
+
+
+
+9.0 VERSION 2.20 and newer versions
+
+The help screen, displayed by pressing <return> at the command line is as
+below:
+-------------------------------------------------------------------------------
+
+   LHarc Version 3.20 junior (Atari)
+   (c) Yoshizaki, 1988-1989, Grunenberg, Mandel, 1994, Haun, 1996/97
+ ================================================================ Oct  3 1997 =
+ Aufruf: LHarc [<Kommando>] [{{-|/}{<Schalter>[-|+|0-3|<Option>]}}...] <Archiv>
+         [{<Laufwerk>:[\]}|{<Hauptverzeichnis>\}] {[&|&-|~] <Pfade> ...}
+ ------------------------------------------------------------------------------
+  <Kommando>
+     a: Dateien an Archiv anfügen       u: Dateien, falls neuer, anfügen
+   f,r: Dateien im Archiv erneuern      m: Datei in das Archiv schieben
+     d: Dateien aus Archiv löschen    e,x: Dateien aus Archiv extrahieren
+     p: Dateien aus Archiv anzeigen   l,v: Dateiliste des Archivs
+     t: Archiv testen                   c: Dateien für AFX komprimieren
+ ------------------------------------------------------------------------------
+  <Schalter>  (ACHTUNG: Die Bedeutung des d-Schalters wurde komplett geändert)
+     a: Erlaube alle Dateiattribute     b: Archiv-Bit der Dateien löschen
+     c: Kein Vergleich des Dateidatums  d: Bearbeitete Dateien löschen
+     e: Dateikommentare eingeben        f: Ordner ebenfalls einpacken
+     g: Archiv in Ordner auspacken      h: Warte auf Tastendruck vor Ende
+     i: Dateiattribute ignorieren       j: Dateien der Länge 0 ausschließen
+     k: Header-Level (0-2)              l: Erzeuge Larc-kompatibles Archiv
+     m: Nachfragen ausschalten          n: Prozeßindikator einstellen
+     o: Erzeuge 1.13-kompatibles Archiv p: Unterscheide Ordnernamen
+     q: Unterdrücke alle Ausgaben       r: rekursive Datei-/Ordnersuche
+     s: Wandle \ in / um                t: Archivdatum setzen
+     u: Ungepackt archivieren           v: Dateien mit anderem Prg ansehen
+     w: Arbeitsverzeichnis bestimmen    x: Erweitere Dateinamen
+     y: Nur Dateien mit Archiv-Bit      z: Archivkommentar eingeben
+     A: Dateien an das Archiv anhängen  B: Backup vom Archiv erzeugen
+     C: Keine Prüfsummenüberprüfung     D: Dateien aus dem Archiv entfernen
+     F: 5+3-Regel für lange Dateinamen  I: Dateien in Verzeichnis packen
+     K: Akustisches Signal am Ende      L: Speicherbedarf einstellen
+     M: Maximale Dateigröße             N: Nur Dateien neuer als Datum ddmmyy
+     O: nicht in Verzeichnis entpacken  P: Prozeßindikator-Zeichen
+     R: Unix-Dateien manuell umbenennen S: Groß-/Kleinschreibung von Dateinamen
+     U: Dateien ungepackt archivieren   W: Kein Wildcard-Matching
+     X: Dateipfade relativ sichern      Y: Verschlüsselung
+     4: Ungepacktes Larc-Archiv         5: Erzwinge lh5-Archiv
+     ?: Hilfsbildschirm ausgeben
+ Pfad; Dateipfad relativ sichern      ~,! Dateien ausschließen
+    &,@ Pfade aus Datei einlesen     &-,@- Pfade von stdin eingeben
+ ==============================================================================
+   ( Eine genauere Beschreibung finden Sie in der Anleitung 'MANUAL.GER' )
+
+  e-mail Yoshizaki: Nifty-Serve  PFF00253  /  oASCII-pcs   pcs02846
+
+-------------------------------------------------------------------------
+The principal differences from older versions are as follows:
+
+9.1 Switches must come after the command before any name or path
+    parameters.
+    "0" and "1" usually have the same effect as "+" and "-".
+    Without any of these characters the switch is turned on, no longer
+    toggled.
+
+9.2 Unix wildcards may be used; as well as * and ?,
+
+       [a-m] sets a range:
+                [a-m]*.* selects all files with names with initial letters
+                between a and m
+       [a|m] or [am] sets a choice:
+                [a|m]*.* selects all files with initial letters a or m.
+                [am]*.* does the same and
+                [a-mv]*.* selects all files with names with initial letters
+                between a and m and those beginning with v
+        [^a] excludes:
+                [^a-m]*.* selects all files with names with initial letters
+                NOT between a and m.
+        As an alternative you can use ! or ~ to exclude files thus:
+                !*.ttp,[am]*.* excludes all .ttp files and all files
+                beginning with a or m
+
+In most circumstances file/path names and wild cards may be chained
+together with commas ie:
+
+        "folder\*.ttp,*.prg"
+
+selects all files with ttp and prg extenders in "folder" and has the same
+effect as
+
+        "folder\*.ttp folder\*.prg"
+
+9.3 <home> no longer works in input commands; files for archiving can only
+be set by the <path> parameter. If extended filenames are set by the /x or
+/r switches the whole path will be stored.  The new /I switch can be used
+to force all files into a single directory with subdirectory names.
+
+To store subdirectories relative to, ie starting from the end of the path
+specified, for which the <home> parameter would have been used as in:
+
+        a ~ /hr ~ path1\arc ~ a:path2\ ~ path3\*.prg
+
+you may open the window a:path2\ and add the drive name 'a:' to the <path>
+parameter as described in section 5.6:
+
+        a ~ /hr ~ path1\arc ~ a:path3\*.prg
+
+or use the right button to launch LHarc from an inactive window.
+
+Alternatively, from version 2.22 on, the switch /X (store relative to
+the given paths) suppresses the path name from the archive, while storing
+subdirectory names
+
+        a ~ /hrX ~ path1\arc ~ a:path3\*.prg
+
+or inserting a ';' in the path suppresses the part of the path before the
+semi-colon, ie
+
+    a ~ /hr ~ path1\arc ~ e:\path2\folder1;\folder2\
+                          ^^^^^^^^^^^^^^^^
+                          | This part of the path won't be stored !
+
+9.4 Redirection: '>>' is now officially supported as well as '>'.
+Indirection using '<' to read instructions from a file is not yet
+implemented, but using '@' or '&' allows a list of files to be read in so
+the command line
+
+    v /h arc  &comm
+
+will view the archive "arc" listing only the files named in the file "comm".
+Final colons are no longer needed ">prn" and ">aux" will now work.
+
+9.5 switches - only changes from 2.01 are described
+
+/r[-|+|2]       r2 is now acknowledged to be redundant; it will do the same
+                as /r.
+
+/f[-|+|2|3]     includes folders in archives as files, not just as part of
+                extended file names, apparently for Unix compatibility.
+
+                Version 2.22 or newer:
+                /f2 Wildcard-Matching also when including folders.
+                /f3 as /f2, but only compress folders.
+
+/g[-|+]         creates a folder with the archive name and writes output
+                files to it (as UNLZH does)
+
+/x[-|+|2|3]     the new options 2,3 force initial backslashes,
+                representing the root directory, on and off respectively
+
+/p[-|+]         as before
+
+/I(dir\)        Stores all archived files with the extended name
+                'dir\filepath\file.ext'. This switch sets /x3.
+                Setting the switch /x0 will stripp the original filepath.
+
+/n[-|+|2|3]     Process indicators s before
+                /n2 shows progress a % instead of a row of *
+                /n3 shows a rotating /
+
+/q[-|+|2]       use this instead of /d to suppress all screen output;
+
+                Version 2.22 or newer:
+                /q2 only suppresses the title output.
+                see /d below
+
+/d[-|+]         deletes existing files (like the m command) but also
+                deletes them from archives when extracting
+
+/D[-|+]         Version 2.32 or newer:
+                Will delete all files in the archive not specified by
+                the user or found by LHarc.
+
+/A[-|+]         Will only add a file if the file is not already in the
+                archive.
+
+/e[-|+]         As before
+
+/z[-|+]<file>   Like /e, but the comment relates to the archive as a whole
+                not to individual files.
+
+                Version 2.22 or newer:
+                If <file> is specified, the comment is read from <file>,
+                not from standard input.
+
+/m[-|+|2|3]     Version 2.22 or newer:
+                /m2 suppresses only the message 'Create folder ?'
+                /m3 suppresses only the message 'Overwrite file ?'
+
+/Y<key>         Version 2.3:
+                Encrypts files during compression using <key> as a pass-
+                word and decrypts files during extraction.
+
+/t
+/w              All as before
+/c
+
+/C[-|+]         Omits the checksum test when extracting, speeding up the
+                process and allowing corrupt files to be expanded.
+
+/v[-|+|2|3]<file>
+                Less.ttp is no longer taken as a default; you must write
+                something like "/vd:\view.ttp". /v2 suppresses archive
+                and file names from the output and /v3 acts like /qv2
+                suppressing all screen output but the file contents
+                themselves. As before a separate switch /v2,3 is needed for
+                these options, following the first one.
+
+/h              As before
+
+/N<ddmmyy>      Only selects files later than the date ddmmyy.
+
+/i[-|+|2|3]     Extracts files, ignoring all attributes and with the
+                current date and time.
+
+                Version 2.22 or newer:
+                /i2 only current date and time.
+                /i3 ignoring all attributes.
+
+/y              As before
+
+/b              Resets only the changed-attribute
+
+/B              Retains a back-up copy of an amended archive with the
+                extender.bak, overwriting any previous .bak file with the
+                same name. Works with input commands and when the /d switch
+                is set.
+
+/l[-|+|2]       Version 2.3
+                /l2 force Larc (lh0) compression even if the archive will
+                get longer (disables /U)
+
+/o[-|+|2]       Version 2.3
+                /o2 force LHarc (lh1) compression even if the archive will
+                get longer (disables /U)
+
+/5[-|+|2]       Forces lh5 mode on all files including small files as
+                before and also archive files which would otherwise be
+                stored without compression (see /u). Creates smallest archives
+                possible.
+
+                Version 2.3
+                /52 force LHA (lh5) compression even if the archive will
+                get longer (disables /U)
+
+/W[-|+]         No wildcard-matching except to exclude files and with
+                switch /U (Version 2.22 or newer)
+
+                Version 2.32
+                /W2 disable multiple files like 'file1.ext,file2.ext'
+
+/X[-|+]         Store paths relative to specified paths (see 9.3.)
+                (Version 2.22 or newer)
+
+/K[0-3]         Acoustic signal after finishing (up to 3 seconds)
+                (Version 2.22 or newer)
+
+/k[0-2]         Allows the type of header to be set:
+                ie levels
+                /k0 or /k:      (compatible as with the old /k), /e and /z
+                                are disabled
+                /k1:            (standard)
+                /k2             (extended)
+
+/u              As before but versions newer than 2.20 will not by default
+                compress archive files with the extenders
+                ARC/ARJ/LZH/LZS/LHA/TAZ/ZOO/ZIP/TGZ/GZ/GIF/JPG/HPK
+
+/U[-|+]<filespec(s)>
+                Allows only specific file(types) identified by wildcards to
+                be saved without compression, others are compressed.
+
+                Multiple specifications can be chained using commas:
+
+                        /U*.arc,*.lzh,readme
+
+                This switch is meaningless with /5,/Y,/52,/l2 and /o2
+
+/4[-|+]         saves without packing but in Larc compatible format. (lz4)
+
+/P<chars>       Allows the process indicators * and . to be changed.
+
+/L[0-2]         Limits the memory used by LHarc, mainly for multi-tasking.
+                /L0 - use 50% of available memory (max. 900 KByte)
+                /L1 - use only about 250-450 KByte memory
+                /L2 - use all memory available (max. 2 MByte)
+
+/M<size>        Sets a limit to the size of file to be archived or extracted
+
+/S[-|+|2]       Allows LHarc to distinguish always between upper and lower
+                case filenames
+
+                Version 2.22 or newer:
+                /S2 - no case-sensitivity
+
+/R              LHarc converts Unix filenames automatically: this option
+                allows the user to override LHarc's proposals.
+
+/j              ignores empty files
+
+/O              don't extract archive to a folder if it's the first name
+                (after that of the archive) on the command line
+                (Version 3.12 or newer)
+
+/F              create gemdos file names using the first five and the last
+                three characters of a long file name (so-called "five plus
+                three method") instead of cutting off after the eighth
+                character
+                (Version 3.12 or newer)
+
+
+9.6 New environment-variables
+
+TMPDIR      same as TMP
+
+UNPACKED    same as switch /U
+
+COLUMNS     number of columns the screen is able to display
+
+LHARCPAR    if set, all arguments are printed before executing the command
+            (Version 2.22 or newer)
+
+ARCTEMP     same as TMP (Version 2.3 or newer)
+
+LHA         same as LHARC (Version 2.3 or newer)
+
+LHARCDIR    same as parameter 'DRIVE/HOME-DIRECTORY' (see 5.5)
+            (Version 2.31 or newer)
+
+
+9.7 Return-Codes (Version 2.22 or newer)
+
+    Bit 0  (1)    - Bad Table
+    Bit 1  (2)    - CRC Error
+    Bit 2  (4)    - Write-Error
+    Bit 3  (8)    - Read-Error
+    Bit 4  (16)   - Can't rename file or create folder
+    Bit 5  (32)   - Can't copy/create temp. archive
+    Bit 6  (64)   - Not implemented command
+    Bit 7  (128)  - No LHarc-archive/no archivname
+    Bit 8  (256)  - File not found/No file specified
+    Bit 9  (512)  - Not enough memory
+
+    Version 2.31 or newer:
+    Bit 10 (1024) - Garbage found and skipped
+    Bit 11 (2048) - Garbage found at the archive-end
+
+
+9.8 Temporary files
+
+LHA)(T)(.XXX    original archive and work files
+__temp__.lzs    workfile during AFX compression (Version 2.22 or newer)
+
+
+ACKNOWLEDGMENTS: the material for this document was obtained and in some
+cases quoted from Theo Runia's MAN.ENG and Thomas Quester's MAN.DEU and
+related sources with additional material for versions newer than 2.20 from
+Christian Grunenberg.
+
+If you have any comments or corrections please contact:
+
+Alan Kennedy 107 Fernside Road London SW12 8LH
+
+© Alan Kennedy  12/08/93
+
+This document may be freely distributed on disk but may not be published in
+printed form without the author's permission.
+

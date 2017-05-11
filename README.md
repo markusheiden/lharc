@@ -2,6 +2,8 @@
 
 Kompressionsprogramm LHARC für Atari.
 
+Dies ist die letzte Version 3.20 beta 3.
+
 ## Encoding
 
 Alle Textdateien sind in UTF-8 enkodiert.
@@ -12,3 +14,9 @@ kann man das Kommandozeilentool [recode](https://github.com/pinard/Recode) verwe
 recode UTF-8..AtariST *.TXT
 recode UTF-8..AtariST *.FIL
 ```
+
+## Dokumentation
+
+* [Deutsche Anleitung](DOKU/MANUAL.GER)
+* [Deutsche Release Notes](DOKU/HISTORY.TXT)
+* [English manual](DOKU/MANUAL.ENG)
