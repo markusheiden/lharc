@@ -1,0 +1,34 @@
+lharc.ttp
+
+.C [-G -P -W-ucp]
+.S [-D__030__=0 -D__SHELL__=0]
+.L [-S=32000]
+
+=
+
+crt0.o
+
+lharc.c
+util.s
+procind.c
+
+open.c
+MINTLIB.LIB
+
+decode0.s
+decode1.s
+decode5.s
+decodeio.s
+
+encode0.s
+encode1.s
+encode5.s
+encodeio.s
+
+crc.s
+crypt.s
+
+test_afx.s
+
+inqmagx.s
+cookie.s
